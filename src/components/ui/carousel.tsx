@@ -16,13 +16,6 @@ type UseCarouselParameters = Parameters<typeof useEmblaCarousel>
 type CarouselOptions = UseCarouselParameters[0]
 type CarouselPlugin = UseCarouselParameters[1]
 
-type CarouselProps = {
-  opts?: CarouselOptions
-  plugins?: CarouselPlugin
-  orientation?: "horizontal" | "vertical"
-  setApi?: (api: CarouselApi) => void
-}
-
 type CarouselContextProps = {
   carouselRef: ReturnType<typeof useEmblaCarousel>[0]
   api: ReturnType<typeof useEmblaCarousel>[1]
@@ -83,7 +76,12 @@ const Carousel = React.forwardRef<
       setCanScrollPrev(currentApi.canScrollPrev())
       setCanScrollNext(currentApi.canScrollNext())
       setActiveSnap(currentApi.selectedScrollSnap())
-      setSlideSnaps(currentApi.scrollSnaps())
+      if (typeof currentApi.scrollSnaps === "function") {
+        setSlideSnaps(currentApi.scrollSnaps())
+      } else {
+        // Fallback if scrollSnaps is not a function
+        setSlideSnaps([])
+      }
     }, [])
 
     const scrollPrev = React.useCallback(() => {
@@ -275,11 +273,11 @@ const CarouselIndicator = React.forwardRef<
   return (
     <Button
       ref={ref}
-      size={size} // Will use default from Button (h-10 w-10) if not overridden, or CarouselIndicator can set its own default variant & size
+      size={size}
       className={cn(
-        "h-2 w-2 p-0 rounded-full mx-1", // Base styling for indicator
-        isActive ? "bg-primary opacity-100" : "bg-primary opacity-50", // Active vs inactive state
-        "hover:bg-primary hover:opacity-75", // Hover state
+        "h-2 w-2 p-0 rounded-full mx-1", 
+        isActive ? "bg-primary opacity-100" : "bg-primary opacity-50",
+        "hover:bg-primary hover:opacity-75", 
         className
       )}
       onClick={() => scrollTo(index)}
@@ -306,7 +304,7 @@ const CarouselDots = React.forwardRef<
         {...props}
         >
         {slideSnaps.map((_, index) => (
-            <CarouselIndicator key={index} index={index} variant="ghost" size="icon" /> // Using 'ghost' variant and 'icon' size for small clickable dots
+            <CarouselIndicator key={index} index={index} variant="ghost" size="icon" />
         ))}
         </div>
     );
