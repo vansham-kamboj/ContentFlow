@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -41,6 +42,11 @@ body {
     --sidebar-accent-foreground: 240 5.9% 10%;
     --sidebar-border: 220 13% 91%;
     --sidebar-ring: 217.2 91.2% 59.8%;
+
+    /* Gradient colors for light theme */
+    --gradient-one-color: hsla(271, 91%, 79%, 0.15); /* Light Accent based */
+    --gradient-two-color: hsla(231, 64%, 30%, 0.1);  /* Light Primary based */
+    --gradient-transparent-bg: hsla(0, 0%, 100%, 0); /* Transparent version of light background */
   }
 
   .dark {
@@ -76,6 +82,11 @@ body {
     --sidebar-accent-foreground: 240 4.8% 95.9%;
     --sidebar-border: 240 3.7% 15.9%;
     --sidebar-ring: 217.2 91.2% 59.8%;
+
+    /* Gradient colors for dark theme */
+    --gradient-one-color: hsla(271, 91%, 79%, 0.1);  /* Dark Accent based */
+    --gradient-two-color: hsla(231, 64%, 30%, 0.08); /* Dark Primary based */
+    --gradient-transparent-bg: hsla(0, 0%, 7%, 0);   /* Transparent version of dark background */
   }
 }
 
@@ -85,13 +96,15 @@ body {
   }
   body {
     @apply text-foreground;
-    /* Light theme gradient by default */
-    background-image: linear-gradient(to bottom right, hsl(var(--background)), hsl(var(--secondary)));
-    background-attachment: fixed; /* Ensure gradient covers the whole viewport and doesn't scroll */
+    background-color: hsl(var(--background)); /* Base background color */
+    background-image:
+      /* Top-left accent gradient */
+      radial-gradient(circle at 15% 25%, var(--gradient-one-color) 0%, var(--gradient-transparent-bg) 30vmax),
+      /* Bottom-right primary gradient */
+      radial-gradient(circle at 85% 75%, var(--gradient-two-color) 0%, var(--gradient-transparent-bg) 35vmax);
+    background-repeat: no-repeat;
+    background-attachment: fixed; /* Ensure gradients cover the whole viewport and don't scroll */
   }
 
-  .dark body {
-    /* Dark theme gradient */
-    background-image: linear-gradient(to bottom right, hsl(var(--background)), hsl(var(--muted)));
-  }
+  /* No longer need a separate .dark body rule for background-image as variables handle theming */
 }
