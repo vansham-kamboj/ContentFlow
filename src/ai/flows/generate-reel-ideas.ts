@@ -1,3 +1,4 @@
+
 'use server';
 
 /**
@@ -46,8 +47,15 @@ const generateReelIdeasFlow = ai.defineFlow(
     inputSchema: GenerateReelIdeasInputSchema,
     outputSchema: GenerateReelIdeasOutputSchema,
   },
-  async input => {
-    const {output} = await prompt(input);
-    return output!;
+  async (input): Promise<GenerateReelIdeasOutput> => {
+    try {
+      const {output} = await prompt(input);
+      return output!;
+    } catch (e: any) {
+      if (e instanceof Error && (e.message.includes('[503 Service Unavailable]') || e.message.includes('The model is overloaded'))) {
+        throw new Error("The AI service is currently experiencing high demand and is temporarily unavailable. Please try again in a few moments.");
+      }
+      throw e;
+    }
   }
 );
