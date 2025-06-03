@@ -3,7 +3,7 @@
 
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { Zap, Film, Instagram, LinkedinIcon, CheckCircle2, User, Briefcase, Rocket, Brain, Hash, FileText, Shuffle, Save, Target, BarChart3, Clock3 } from 'lucide-react';
+import { Zap, Film, Instagram, Linkedin, CheckCircle2, User, Briefcase, Rocket, Brain, Hash, FileText, Shuffle, Save, Target, BarChart3, Clock3 } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import Image from 'next/image';
 import React from 'react';
@@ -17,7 +17,7 @@ const growthStats = [
 const supportedContentTypes = [
   { icon: Film, label: "Reels", color: "text-pink-400" },
   { icon: Instagram, label: "Stories", color: "text-orange-400" },
-  { icon: LinkedinIcon, label: "LinkedIn Posts", color: "text-sky-400" },
+  { icon: Linkedin, label: "LinkedIn Posts", color: "text-sky-400" },
 ];
 
 const keyFeaturesList = [
