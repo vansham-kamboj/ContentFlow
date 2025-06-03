@@ -2,11 +2,31 @@
 "use client"
 
 import * as React from "react"
+import useEmblaCarousel, {
+  type UseEmblaCarouselType,
+  type EmblaOptionsType,
+  type EmblaCarouselType,
+} from "embla-carousel-react"
 import { ArrowLeft, ArrowRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 
+type CarouselApi = UseEmblaCarouselType[1]
+type UseCarouselParameters = Parameters<typeof useEmblaCarousel>
+type CarouselOptions = UseCarouselParameters[0]
+type CarouselPlugin = UseCarouselParameters[1]
+
+type CarouselProps = {
+  opts?: CarouselOptions
+  plugins?: CarouselPlugin
+  orientation?: "horizontal" | "vertical"
+  setApi?: (api: CarouselApi) => void
+}
+
 type CarouselContextProps = {
+  carouselRef: ReturnType<typeof useEmblaCarousel>[0]
+  api: ReturnType<typeof useEmblaCarousel>[1]
+  opts: CarouselOptions
   orientation: "horizontal" | "vertical"
   scrollPrev: () => void
   scrollNext: () => void
@@ -28,22 +48,15 @@ function useCarousel() {
   return context
 }
 
-type UseEmblaCarouselType = typeof import("embla-carousel-react").default
-type EmblaOptionsType = NonNullable<Parameters<UseEmblaCarouselType>[0]>
-type EmblaCarouselType = NonNullable<ReturnType<UseEmblaCarouselType>[1]>
-
 const Carousel = React.forwardRef<
   HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement> & {
-    opts?: EmblaOptionsType
-    orientation?: "horizontal" | "vertical"
-    plugins?: Parameters<NonNullable<ReturnType<UseEmblaCarouselType>[1]>["plugins"]>[0]
-  }
+  React.HTMLAttributes<HTMLDivElement> & CarouselProps
 >(
   (
     {
-      opts,
       orientation = "horizontal",
+      opts,
+      setApi,
       plugins,
       className,
       children,
@@ -51,66 +64,42 @@ const Carousel = React.forwardRef<
     },
     ref
   ) => {
-    const [emblaRef, emblaApi] = React.useRef<UseEmblaCarouselType | null>(null)
-      .current ?? [null, null] // Simulating useEmblaCarousel hook
-
-    // Mocking emblaApi for now as we can't actually run the hook here
-    // In a real scenario, you'd use:
-    // const [emblaRef, emblaApi] = useEmblaCarousel({ ...opts, axis: orientation === "horizontal" ? "x" : "y" }, plugins)
-    // For prototyping, we'll mock the necessary parts of emblaApi
-    const mockEmblaApi = React.useMemo(() => {
-      if (typeof window === "undefined") {
-         return {
-          selectedScrollSnap: () => 0,
-          scrollSnaps: () => [0],
-          canScrollPrev: () => false,
-          canScrollNext: () => true,
-          scrollPrev: () => {},
-          scrollNext: () => {},
-          scrollTo: () => {},
-          on: (() => {}) as EmblaCarouselType["on"],
-          off: (() => {}) as EmblaCarouselType["off"],
-          plugins: () => ({}) as ReturnType<EmblaCarouselType["plugins"]>,
-        } as unknown as EmblaCarouselType;
-      }
-      // Dynamically import and use useEmblaCarousel on the client
-      // This is a simplified representation; actual implementation may vary
-      const { default: useEmblaCarousel } = require("embla-carousel-react");
-      const [actualEmblaRef, actualEmblaApi] = useEmblaCarousel(
-        { ...opts, axis: orientation === "horizontal" ? "x" : "y" },
-        plugins
-      );
-      (emblaRef as any) = actualEmblaRef; // Assign to the outer ref
-      return actualEmblaApi;
-
-    }, [opts, orientation, plugins]);
-
-
+    const [carouselRef, api] = useEmblaCarousel(
+      {
+        ...opts,
+        axis: orientation === "horizontal" ? "x" : "y",
+      },
+      plugins
+    )
     const [canScrollPrev, setCanScrollPrev] = React.useState(false)
-    const [canScrollNext, setCanScrollNext] = React.useState(true)
+    const [canScrollNext, setCanScrollNext] = React.useState(false)
     const [activeSnap, setActiveSnap] = React.useState(0)
     const [slideSnaps, setSlideSnaps] = React.useState<number[]>([])
 
-    const onSelect = React.useCallback((currentEmblaApi: EmblaCarouselType) => {
-      if (!currentEmblaApi) return
-      setCanScrollPrev(currentEmblaApi.canScrollPrev())
-      setCanScrollNext(currentEmblaApi.canScrollNext())
-      setActiveSnap(currentEmblaApi.selectedScrollSnap())
-      setSlideSnaps(currentEmblaApi.scrollSnaps())
+    const onSelect = React.useCallback((currentApi: EmblaCarouselType) => {
+      if (!currentApi) {
+        return
+      }
+      setCanScrollPrev(currentApi.canScrollPrev())
+      setCanScrollNext(currentApi.canScrollNext())
+      setActiveSnap(currentApi.selectedScrollSnap())
+      setSlideSnaps(currentApi.scrollSnaps())
     }, [])
 
     const scrollPrev = React.useCallback(() => {
-      mockEmblaApi?.scrollPrev()
-    }, [mockEmblaApi])
+      api?.scrollPrev()
+    }, [api])
 
     const scrollNext = React.useCallback(() => {
-      mockEmblaApi?.scrollNext()
-    }, [mockEmblaApi])
-    
-    const scrollTo = React.useCallback((index: number) => {
-        mockEmblaApi?.scrollTo(index);
-    }, [mockEmblaApi]);
+      api?.scrollNext()
+    }, [api])
 
+    const scrollTo = React.useCallback(
+      (index: number) => {
+        api?.scrollTo(index)
+      },
+      [api]
+    )
 
     const handleKeyDown = React.useCallback(
       (event: React.KeyboardEvent<HTMLDivElement>) => {
@@ -126,47 +115,33 @@ const Carousel = React.forwardRef<
     )
 
     React.useEffect(() => {
-      if (!mockEmblaApi) return
-      onSelect(mockEmblaApi)
-      mockEmblaApi.on("reInit", onSelect)
-      mockEmblaApi.on("select", onSelect)
-      return () => {
-        mockEmblaApi.off("select", onSelect)
-        mockEmblaApi.off("reInit", onSelect)
+      if (!api || !setApi) {
+        return
       }
-    }, [mockEmblaApi, onSelect])
+      setApi(api)
+    }, [api, setApi])
 
-    // Effect to dynamically load and initialize embla-carousel-react on the client
     React.useEffect(() => {
-        if (typeof window !== "undefined") {
-            import("embla-carousel-react").then((mod) => {
-                const useEmblaCarousel = mod.default;
-                const [actualEmblaRef, actualEmblaApi] = useEmblaCarousel(
-                    { ...opts, axis: orientation === "horizontal" ? "x" : "y" },
-                    plugins
-                );
-                (emblaRef as any).current = actualEmblaRef; // This is tricky, assigning ref.current.
-                                                        // The ref passed to the div below should ideally be actualEmblaRef
-                                                        // For simplicity in this environment, direct assignment attempt shown.
-                
-                if (actualEmblaApi) {
-                    // Update state based on the actual emblaApi
-                    onSelect(actualEmblaApi);
-                    actualEmblaApi.on("reInit", onSelect);
-                    actualEmblaApi.on("select", onSelect);
-                    // Make emblaApi methods use actualEmblaApi
-                    // This part is complex as context provides stable functions.
-                    // A full solution might involve updating context or passing emblaApi down differently.
-                }
-            });
-        }
-    }, [opts, orientation, plugins, onSelect]);
-
+      if (!api) {
+        return
+      }
+      onSelect(api)
+      api.on("reInit", onSelect)
+      api.on("select", onSelect)
+      return () => {
+        api?.off("select", onSelect)
+        api?.off("reInit", onSelect)
+      }
+    }, [api, onSelect])
 
     return (
       <CarouselContext.Provider
         value={{
-          orientation,
+          carouselRef,
+          api: api,
+          opts: opts,
+          orientation:
+            orientation || (opts?.axis === "y" ? "vertical" : "horizontal"),
           scrollPrev,
           scrollNext,
           canScrollPrev,
@@ -179,20 +154,13 @@ const Carousel = React.forwardRef<
       >
         <div
           ref={ref}
-          className={cn(
-            "relative",
-            orientation === "horizontal" ? " " : " ",
-            className
-          )}
+          onKeyDownCapture={handleKeyDown}
+          className={cn("relative", className)}
           role="region"
           aria-roledescription="carousel"
-          onKeyDownCapture={handleKeyDown}
           {...props}
         >
-          {/* The ref here should ideally be the one from the actual useEmblaCarousel hook */}
-          <div ref={emblaRef as any} className="overflow-hidden">
-            {children}
-          </div>
+          {children}
         </div>
       </CarouselContext.Provider>
     )
@@ -204,10 +172,11 @@ const CarouselContent = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
 >(({ className, ...props }, ref) => {
-  const { orientation } = useCarousel()
+  const { carouselRef, orientation } = useCarousel()
   return (
-    <div ref={ref} className="overflow-hidden">
+    <div ref={carouselRef} className="overflow-hidden">
       <div
+        ref={ref}
         className={cn(
           "flex",
           orientation === "horizontal" ? "-ml-4" : "-mt-4 flex-col",
@@ -297,7 +266,6 @@ const CarouselNext = React.forwardRef<
 })
 CarouselNext.displayName = "CarouselNext"
 
-
 const CarouselIndicator = React.forwardRef<
   HTMLButtonElement,
   React.ComponentProps<typeof Button> & { index: number }
@@ -307,10 +275,11 @@ const CarouselIndicator = React.forwardRef<
   return (
     <Button
       ref={ref}
-      size={size}
+      size={size} // Will use default from Button (h-10 w-10) if not overridden, or CarouselIndicator can set its own default variant & size
       className={cn(
-        "h-2 w-2 p-0 rounded-full mx-1",
-        isActive ? "bg-primary" : "bg-primary/50",
+        "h-2 w-2 p-0 rounded-full mx-1", // Base styling for indicator
+        isActive ? "bg-primary opacity-100" : "bg-primary opacity-50", // Active vs inactive state
+        "hover:bg-primary hover:opacity-75", // Hover state
         className
       )}
       onClick={() => scrollTo(index)}
@@ -333,11 +302,11 @@ const CarouselDots = React.forwardRef<
     return (
         <div
         ref={ref}
-        className={cn("absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center justify-center space-x-2", className)}
+        className={cn("absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center justify-center space-x-1", className)}
         {...props}
         >
         {slideSnaps.map((_, index) => (
-            <CarouselIndicator key={index} index={index} />
+            <CarouselIndicator key={index} index={index} variant="ghost" size="icon" /> // Using 'ghost' variant and 'icon' size for small clickable dots
         ))}
         </div>
     );
@@ -346,6 +315,7 @@ CarouselDots.displayName = "CarouselDots";
 
 
 export {
+  type CarouselApi,
   Carousel,
   CarouselContent,
   CarouselItem,
@@ -353,6 +323,4 @@ export {
   CarouselNext,
   CarouselDots,
   CarouselIndicator,
-  type EmblaOptionsType,
-  type EmblaCarouselType,
 }
