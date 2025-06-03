@@ -4,19 +4,22 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
-import { Loader2, Download, Copy } from 'lucide-react';
+import { Loader2, Download, Copy, CalendarPlus } from 'lucide-react';
 import type { GenerateReelScriptOutput } from '@/ai/flows/generate-reel-script';
 import { useToast } from '@/hooks/use-toast';
+import * as ics from 'ics';
+import { getDateForDayOfWeek } from '@/lib/utils';
 
 interface ReelPreviewModalProps {
   isOpen: boolean;
   onClose: () => void;
   reelTitle: string;
   reelIdea: string;
+  dayOfWeek: string; // e.g., "Monday"
   scriptData: GenerateReelScriptOutput | null | undefined;
   isLoadingScript: boolean;
   error?: string | null;
-  onRegenerate?: () => void; // Optional: if regeneration within modal is needed
+  onRegenerate?: () => void;
 }
 
 export function ReelPreviewModal({
@@ -24,6 +27,7 @@ export function ReelPreviewModal({
   onClose,
   reelTitle,
   reelIdea,
+  dayOfWeek,
   scriptData,
   isLoadingScript,
   error,
@@ -31,22 +35,22 @@ export function ReelPreviewModal({
 }: ReelPreviewModalProps) {
   const { toast } = useToast();
 
-  const downloadTextFile = (filename: string, text: string) => {
+  const downloadFile = (filename: string, content: string, contentType: string) => {
     const element = document.createElement("a");
-    const file = new Blob([text], { type: 'text/plain;charset=utf-8' });
+    const file = new Blob([content], { type: contentType });
     element.href = URL.createObjectURL(file);
     element.download = filename;
     document.body.appendChild(element);
     element.click();
     document.body.removeChild(element);
-    toast({ title: "Content Downloaded", description: `${filename} has been downloaded.` });
   };
 
-  const handleDownload = () => {
+  const handleDownloadText = () => {
     if (scriptData) {
       const content = `
 Reel Title: ${reelTitle}
 Reel Idea: ${reelIdea}
+Day: ${dayOfWeek}
 
 Script:
 ${scriptData.reelScript}
@@ -57,9 +61,44 @@ ${scriptData.caption}
 Hashtags:
 ${scriptData.hashtags.join(' ')}
       `;
-      downloadTextFile(`${reelTitle.replace(/\s+/g, '_')}_reel_content.txt`, content.trim());
+      downloadFile(`${reelTitle.replace(/\s+/g, '_')}_reel_content.txt`, content.trim(), 'text/plain;charset=utf-8');
+      toast({ title: "Content Downloaded", description: "Reel content text file has been downloaded." });
     }
   };
+  
+  const handleAddToCalendar = () => {
+    if (!scriptData || !reelTitle || !dayOfWeek) {
+      toast({ title: "Error", description: "Missing data to create calendar event.", variant: "destructive" });
+      return;
+    }
+
+    const eventDateArray = getDateForDayOfWeek(dayOfWeek, 10, 0); // Default to 10:00 AM
+    if (!eventDateArray) {
+        toast({ title: "Error", description: "Could not determine date for calendar event.", variant: "destructive" });
+        return;
+    }
+    
+    const event: ics.EventAttributes = {
+      title: `Reel: ${reelTitle}`,
+      description: `Idea: ${reelIdea}\n\nScript Preview:\n${scriptData.reelScript.substring(0, 200)}...\n\nCaption Preview:\n${scriptData.caption.substring(0,150)}...\n\nHashtags: ${scriptData.hashtags.join(' ')}`,
+      start: eventDateArray,
+      duration: { hours: 1 },
+    };
+
+    const { error: icsError, value: icsValue } = ics.createEvent(event);
+
+    if (icsError) {
+      console.error("Failed to create ICS file:", icsError);
+      toast({ title: "ICS Creation Failed", description: icsError.message, variant: "destructive" });
+      return;
+    }
+
+    if (icsValue) {
+      downloadFile(`${reelTitle.replace(/\s+/g, '_')}_event.ics`, icsValue, 'text/calendar;charset=utf-8');
+      toast({ title: "Calendar Event Created", description: "ICS file downloaded. You can import it into your calendar." });
+    }
+  };
+
 
   const handleCopyToClipboard = (text: string, type: string) => {
     navigator.clipboard.writeText(text)
@@ -77,7 +116,7 @@ ${scriptData.hashtags.join(' ')}
         <DialogHeader>
           <DialogTitle className="font-headline text-2xl">Reel Preview: {reelTitle}</DialogTitle>
           <DialogDescription>
-            Generated script, caption, and hashtags for your reel idea: "{reelIdea}"
+            {dayOfWeek}: Generated script, caption, and hashtags for your reel idea: "{reelIdea}"
           </DialogDescription>
         </DialogHeader>
         <ScrollArea className="max-h-[60vh] pr-4">
@@ -136,13 +175,21 @@ ${scriptData.hashtags.join(' ')}
             </div>
           )}
         </ScrollArea>
-        <DialogFooter className="mt-4">
-          {scriptData && !isLoadingScript && !error && (
-            <Button onClick={handleDownload} variant="outline" className="text-foreground border-accent hover:bg-accent/10">
-              <Download className="mr-2 h-4 w-4" />
-              Download All
-            </Button>
-          )}
+        <DialogFooter className="mt-4 sm:justify-between">
+          <div className="flex gap-2">
+            {scriptData && !isLoadingScript && !error && (
+              <>
+                <Button onClick={handleDownloadText} variant="outline" className="text-foreground border-accent hover:bg-accent/10">
+                  <Download className="mr-2 h-4 w-4" />
+                  Download Text
+                </Button>
+                <Button onClick={handleAddToCalendar} variant="outline" className="text-foreground border-primary hover:bg-primary/10">
+                  <CalendarPlus className="mr-2 h-4 w-4" />
+                  Add to Calendar
+                </Button>
+              </>
+            )}
+          </div>
           <Button onClick={onClose} variant="outline">Close</Button>
         </DialogFooter>
       </DialogContent>

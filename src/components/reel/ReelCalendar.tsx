@@ -61,14 +61,10 @@ export function ReelCalendar() {
       const errorMessage = error instanceof Error ? error.message : "An unknown error occurred.";
       const fullErrorText = `Failed to generate idea for ${day}. ${errorMessage}`;
       setReelIdeas(prev => prev.map(idea => idea.id === day ? { ...idea, isLoading: false, error: fullErrorText } : idea));
-      toast({
-        title: `Error Generating Idea for ${day}`,
-        description: errorMessage, 
-        variant: "destructive",
-      });
+      // Toast is now handled by the global error message logic after all promises resolve
       return fullErrorText; 
     }
-  }, [toast]);
+  }, []); // Removed toast from dependencies as it's stable
 
   const handleFetchAllIdeas = useCallback(async () => {
     if (!niche.trim()) {
@@ -95,12 +91,17 @@ export function ReelCalendar() {
         const numServiceUnavailableErrors = errorsEncountered.filter(err => serviceUnavailableErrorPattern.test(err)).length;
 
         if (numServiceUnavailableErrors > 0 && numServiceUnavailableErrors === errorsEncountered.length) {
-            setGlobalError("The AI service is currently overloaded. Some or all ideas could not be generated. Please try again later.");
+            setGlobalError("The AI service is currently overloaded. All ideas could not be generated. Please try again later.");
+             toast({ title: "AI Service Overloaded", description: "All ideas could not be generated. Please try again later.", variant: "destructive", duration: 5000 });
         } else if (numServiceUnavailableErrors > 0) {
-             setGlobalError("Some ideas could not be generated. This may be partly due to AI service overload. Check individual day statuses or try again.");
+             setGlobalError("Some ideas could not be generated, partly due to AI service overload. Check individual day statuses or try again.");
+             toast({ title: "Partial Success", description: "Some ideas failed, possibly due to AI service issues. Try again or check individual days.", variant: "warning", duration: 5000 });
         } else {
-            setGlobalError("Some ideas could not be generated. Please check individual day statuses or try again.");
+            setGlobalError(`Failed to generate ideas for ${errorsEncountered.length} day(s). Please check individual day statuses or try again.`);
+            toast({ title: "Generation Error", description: `Ideas for ${errorsEncountered.length} day(s) failed.`, variant: "destructive", duration: 5000 });
         }
+    } else {
+        toast({ title: "Ideas Generated!", description: "All reel ideas for the week have been generated.", duration: 3000});
     }
   }, [niche, seriesName, fetchReelIdea, toast]);
 
@@ -110,11 +111,17 @@ export function ReelCalendar() {
       toast({ title: "Niche Required", description: "Please enter your niche to regenerate the idea.", variant: "destructive" });
       return;
     }
-    fetchReelIdea(dayId, niche, seriesName); 
+    fetchReelIdea(dayId, niche, seriesName).then(error => {
+        if (error) {
+            toast({ title: `Error Regenerating Idea for ${dayId}`, description: error, variant: "destructive" });
+        } else {
+            toast({ title: `Idea Regenerated for ${dayId}`, description: "The reel idea has been updated."});
+        }
+    });
   };
 
   const handlePreview = async (ideaToPreview: ReelIdea) => {
-    setSelectedReelForPreview(ideaToPreview);
+    setSelectedReelForPreview(ideaToPreview); // This now includes the 'day' property
     setIsPreviewModalOpen(true);
 
     if (!ideaToPreview.scriptData && ideaToPreview.title && ideaToPreview.oneLineIdea && !ideaToPreview.error) {
@@ -174,7 +181,7 @@ export function ReelCalendar() {
         day: idea.day,
         title: idea.title,
         oneLineIdea: idea.oneLineIdea,
-        scriptData: idea.scriptData // This can be null if not generated
+        scriptData: idea.scriptData 
       }));
 
       const planData = {
@@ -283,6 +290,7 @@ export function ReelCalendar() {
             onClose={() => setIsPreviewModalOpen(false)}
             reelTitle={selectedReelForPreview.title}
             reelIdea={selectedReelForPreview.oneLineIdea}
+            dayOfWeek={selectedReelForPreview.day} 
             scriptData={selectedReelForPreview.scriptData}
             isLoadingScript={!!selectedReelForPreview.isGeneratingScript}
             error={selectedReelForPreview.error}
