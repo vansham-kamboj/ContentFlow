@@ -30,6 +30,7 @@ const nextConfig: NextConfig = {
         fs: false, // Commonly needed if other Node.js core modules are pulled in
         net: false, // For packages expecting Node.js network APIs
         tls: false, // For packages expecting Node.js TLS/SSL APIs
+        dns: false, // For packages expecting Node.js DNS APIs (e.g., @grpc/grpc-js)
       };
     }
     return config;
