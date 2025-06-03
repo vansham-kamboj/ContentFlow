@@ -8,9 +8,6 @@ import {
   Carousel,
   CarouselContent,
   CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-  CarouselDots,
 } from "@/components/ui/carousel";
 import Autoplay from "embla-carousel-autoplay";
 import React from 'react';
@@ -71,7 +68,7 @@ export default function NewHomePage() {
           <Carousel
             opts={{
               align: "start",
-              loop: true,
+              loop: true, // Enable looping
             }}
             plugins={[plugin.current]}
             className="w-full max-w-2xl mx-auto relative"
@@ -92,9 +89,7 @@ export default function NewHomePage() {
                 </CarouselItem>
               ))}
             </CarouselContent>
-            <CarouselPrevious className="text-primary-foreground bg-accent hover:bg-accent/80 border-accent hover:border-accent/80 left-[-50px] md:left-[-60px]" />
-            <CarouselNext className="text-primary-foreground bg-accent hover:bg-accent/80 border-accent hover:border-accent/80 right-[-50px] md:right-[-60px]" />
-            <CarouselDots />
+            {/* Removed CarouselPrevious, CarouselNext, and CarouselDots */}
           </Carousel>
         </div>
       </section>
