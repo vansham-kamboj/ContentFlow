@@ -108,8 +108,8 @@ export default function NewHomePage() {
             See the <span className="text-accent">Growth</span>. Not the Grind.
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12 text-center">
-            {growthStats.map((stat) => (
-              <div key={stat.text} className="p-6 bg-card rounded-lg shadow-xl border border-border">
+            {growthStats.map((stat, index) => (
+              <div key={index} className="p-6 bg-card rounded-lg shadow-xl border border-border">
                 <stat.icon className={`w-12 h-12 mx-auto mb-4 ${stat.color}`} />
                 <p className="text-2xl font-semibold text-primary-foreground">{stat.text}</p>
               </div>
@@ -118,8 +118,8 @@ export default function NewHomePage() {
           <div className="text-center mb-8">
             <h3 className="text-2xl font-semibold mb-4 text-primary-foreground">Supports Your Favorite Platforms:</h3>
             <div className="flex justify-center items-center gap-6">
-              {supportedContentTypes.map(type => (
-                <div key={type.label} className="flex flex-col items-center">
+              {supportedContentTypes.map((type, index) => (
+                <div key={index} className="flex flex-col items-center">
                   <type.icon className={`w-10 h-10 mb-2 ${type.color}`} />
                   <span className="text-muted-foreground">{type.label}</span>
                 </div>
@@ -128,9 +128,9 @@ export default function NewHomePage() {
           </div>
           <div className="max-w-2xl mx-auto">
             <ul className="space-y-3">
-              {keyFeaturesList.map(feature => (
-                <li key={feature.text} className="flex items-center text-lg text-muted-foreground">
-                  <CheckCircle2 className="w-6 h-6 mr-3 text-accent" />
+              {keyFeaturesList.map((feature, index) => (
+                <li key={index} className="flex items-center text-lg text-muted-foreground">
+                  <feature.icon className="w-6 h-6 mr-3 text-accent" />
                   {feature.text}
                 </li>
               ))}
@@ -178,8 +178,8 @@ export default function NewHomePage() {
             Perfect For <span className="text-accent">Ambitious Creators</span> Like You
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {targetAudiences.map((audience) => (
-              <Card key={audience.name} className="bg-card text-card-foreground shadow-lg border-border text-center p-6 hover:border-accent transition-colors duration-300">
+            {targetAudiences.map((audience, index) => (
+              <Card key={index} className="bg-card text-card-foreground shadow-lg border-border text-center p-6 hover:border-accent transition-colors duration-300">
                 <audience.icon className="w-12 h-12 mx-auto mb-4 text-accent" />
                 <CardTitle className="font-headline text-xl mb-2">{audience.name}</CardTitle>
                 <CardDescription>{audience.description}</CardDescription>
@@ -196,8 +196,8 @@ export default function NewHomePage() {
             Packed with <span className="text-accent">Powerful Features</span>
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {featureHighlights.map((feature) => (
-              <Card key={feature.title} className="bg-card text-card-foreground shadow-lg border-border p-6 flex flex-col items-center text-center hover:shadow-accent/20 transition-shadow duration-300">
+            {featureHighlights.map((feature, index) => (
+              <Card key={index} className="bg-card text-card-foreground shadow-lg border-border p-6 flex flex-col items-center text-center hover:shadow-accent/20 transition-shadow duration-300">
                 <feature.icon className="w-10 h-10 mb-4 text-accent" />
                 <CardTitle className="font-headline text-lg mb-2">{feature.title}</CardTitle>
                 <CardDescription className="text-sm">{feature.description}</CardDescription>
