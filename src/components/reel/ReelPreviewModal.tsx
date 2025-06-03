@@ -1,3 +1,4 @@
+
 'use client';
 
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
@@ -7,8 +8,7 @@ import { Separator } from '@/components/ui/separator';
 import { Loader2, Download, Copy, CalendarPlus } from 'lucide-react';
 import type { GenerateReelScriptOutput } from '@/ai/flows/generate-reel-script';
 import { useToast } from '@/hooks/use-toast';
-import * as ics from 'ics';
-import { getDateForDayOfWeek } from '@/lib/utils';
+import { getGoogleCalendarUtcDateTimeStrings } from '@/lib/utils'; // Changed import
 
 interface ReelPreviewModalProps {
   isOpen: boolean;
@@ -66,37 +66,27 @@ ${scriptData.hashtags.join(' ')}
     }
   };
   
-  const handleAddToCalendar = () => {
+  const handleAddToGoogleCalendar = () => {
     if (!scriptData || !reelTitle || !dayOfWeek) {
       toast({ title: "Error", description: "Missing data to create calendar event.", variant: "destructive" });
       return;
     }
 
-    const eventDateArray = getDateForDayOfWeek(dayOfWeek, 10, 0); // Default to 10:00 AM
-    if (!eventDateArray) {
+    const dateTimeStrings = getGoogleCalendarUtcDateTimeStrings(dayOfWeek, 10, 0, 1); // 10 AM, 1 hour duration
+
+    if (!dateTimeStrings) {
         toast({ title: "Error", description: "Could not determine date for calendar event.", variant: "destructive" });
         return;
     }
     
-    const event: ics.EventAttributes = {
-      title: `Reel: ${reelTitle}`,
-      description: `Idea: ${reelIdea}\n\nScript Preview:\n${scriptData.reelScript.substring(0, 200)}...\n\nCaption Preview:\n${scriptData.caption.substring(0,150)}...\n\nHashtags: ${scriptData.hashtags.join(' ')}`,
-      start: eventDateArray,
-      duration: { hours: 1 },
-    };
+    const { startUtc, endUtc } = dateTimeStrings;
 
-    const { error: icsError, value: icsValue } = ics.createEvent(event);
+    const eventDescription = `Reel Idea: ${reelIdea}\n\nScript Preview:\n${scriptData.reelScript.substring(0, 200)}...\n\nCaption Preview:\n${scriptData.caption.substring(0,150)}...\n\nHashtags: ${scriptData.hashtags.join(' ')}`;
+    
+    const googleCalendarUrl = `https://www.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(reelTitle)}&dates=${startUtc}/${endUtc}&details=${encodeURIComponent(eventDescription)}&sf=true&output=xml`;
 
-    if (icsError) {
-      console.error("Failed to create ICS file:", icsError);
-      toast({ title: "ICS Creation Failed", description: icsError.message, variant: "destructive" });
-      return;
-    }
-
-    if (icsValue) {
-      downloadFile(`${reelTitle.replace(/\s+/g, '_')}_event.ics`, icsValue, 'text/calendar;charset=utf-8');
-      toast({ title: "Calendar Event Created", description: "ICS file downloaded. You can import it into your calendar." });
-    }
+    window.open(googleCalendarUrl, '_blank');
+    toast({ title: "Opening Google Calendar", description: "Check the new tab to add the event." });
   };
 
 
@@ -183,9 +173,9 @@ ${scriptData.hashtags.join(' ')}
                   <Download className="mr-2 h-4 w-4" />
                   Download Text
                 </Button>
-                <Button onClick={handleAddToCalendar} variant="outline" className="text-foreground border-primary hover:bg-primary/10">
+                <Button onClick={handleAddToGoogleCalendar} variant="outline" className="text-foreground border-primary hover:bg-primary/10">
                   <CalendarPlus className="mr-2 h-4 w-4" />
-                  Add to Calendar
+                  Add to Google Calendar
                 </Button>
               </>
             )}

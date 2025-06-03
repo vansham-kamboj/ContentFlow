@@ -1,3 +1,4 @@
+
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
 import { setDay, addWeeks, startOfDay } from 'date-fns';
@@ -48,4 +49,47 @@ export function getDateForDayOfWeek(
     targetHour,
     targetMinute,
   ];
+}
+
+// Helper to convert a Date object to YYYYMMDDTHHMMSSZ format
+function toUtcGoogleCalendarString(date: Date): string {
+  const year = date.getUTCFullYear();
+  const month = (date.getUTCMonth() + 1).toString().padStart(2, '0');
+  const day = date.getUTCDate().toString().padStart(2, '0');
+  const hours = date.getUTCHours().toString().padStart(2, '0');
+  const minutes = date.getUTCMinutes().toString().padStart(2, '0');
+  const seconds = date.getUTCSeconds().toString().padStart(2, '0');
+  return `${year}${month}${day}T${hours}${minutes}${seconds}Z`;
+}
+
+export function getGoogleCalendarUtcDateTimeStrings(
+  dayName: string,
+  targetHour: number = 10,
+  targetMinute: number = 0,
+  durationHours: number = 1
+): { startUtc: string; endUtc: string } | null {
+  const lowerDayName = dayName.toLowerCase();
+  const targetDayIndex = dayNameToIndex[lowerDayName];
+
+  if (targetDayIndex === undefined) {
+    console.error(`Invalid day name: ${dayName}`);
+    return null;
+  }
+
+  let startDate = setDay(new Date(), targetDayIndex, { weekStartsOn: 1 /* Monday as start of week */ });
+  const today = startOfDay(new Date());
+
+  if (startOfDay(startDate) < today) {
+    startDate = addWeeks(startDate, 1);
+  }
+  
+  startDate.setHours(targetHour, targetMinute, 0, 0); // Sets local time
+
+  const endDate = new Date(startDate.getTime());
+  endDate.setHours(startDate.getHours() + durationHours);
+  
+  return {
+    startUtc: toUtcGoogleCalendarString(startDate),
+    endUtc: toUtcGoogleCalendarString(endDate),
+  };
 }
