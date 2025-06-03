@@ -8,12 +8,14 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { ReelCalendarDay } from './ReelCalendarDay';
 import { ReelPreviewModal } from './ReelPreviewModal';
-import type { ReelIdea } from '@/lib/types';
+import type { ReelIdea, SavedReelDayData } from '@/lib/types';
 import { generateReelIdeas, type GenerateReelIdeasInput } from '@/ai/flows/generate-reel-ideas';
 import { generateReelScript, type GenerateReelScriptInput } from '@/ai/flows/generate-reel-script';
 import { useToast } from '@/hooks/use-toast';
-import { AlertCircle, Loader2, Wand2 } from 'lucide-react';
+import { AlertCircle, Loader2, Wand2, Save } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { db } from '@/lib/firebase';
+import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 
 const DAYS_OF_WEEK = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
 
@@ -33,6 +35,7 @@ export function ReelCalendar() {
   const [seriesName, setSeriesName] = useState('');
   const [reelIdeas, setReelIdeas] = useState<ReelIdea[]>(initialReelIdeas);
   const [isLoadingAll, setIsLoadingAll] = useState(false);
+  const [isSavingPlan, setIsSavingPlan] = useState(false);
   const [globalError, setGlobalError] = useState<string | null>(null);
   
   const [isPreviewModalOpen, setIsPreviewModalOpen] = useState(false);
@@ -52,7 +55,7 @@ export function ReelCalendar() {
       setReelIdeas(prev => prev.map(idea =>
         idea.id === day ? { ...idea, title: result.reelTitle, oneLineIdea: result.oneLineIdea, isLoading: false } : idea
       ));
-      return null; // Success
+      return null; 
     } catch (error) {
       console.error(`Error generating idea for ${day}:`, error);
       const errorMessage = error instanceof Error ? error.message : "An unknown error occurred.";
@@ -154,6 +157,48 @@ export function ReelCalendar() {
     }
   }, [reelIdeas, selectedReelForPreview]);
 
+  const handleSaveWeekPlan = async () => {
+    if (!niche.trim()) {
+      toast({ title: "Niche Required", description: "Please enter your niche before saving.", variant: "destructive" });
+      return;
+    }
+    const hasGeneratedContent = reelIdeas.some(idea => idea.title || idea.oneLineIdea);
+    if (!hasGeneratedContent) {
+      toast({ title: "No Content to Save", description: "Please generate some reel ideas before saving.", variant: "destructive" });
+      return;
+    }
+
+    setIsSavingPlan(true);
+    try {
+      const planDays: SavedReelDayData[] = reelIdeas.map(idea => ({
+        day: idea.day,
+        title: idea.title,
+        oneLineIdea: idea.oneLineIdea,
+        scriptData: idea.scriptData // This can be null if not generated
+      }));
+
+      const planData = {
+        niche,
+        seriesName: seriesName || null,
+        days: planDays,
+        createdAt: serverTimestamp(),
+      };
+
+      await addDoc(collection(db, "weeklyReelPlans"), planData);
+      toast({ title: "Week Plan Saved!", description: "Your reel content plan has been saved to Firestore." });
+    } catch (error) {
+      console.error("Error saving week plan:", error);
+      const errorMessage = error instanceof Error ? error.message : "An unknown error occurred while saving.";
+      toast({
+        title: "Error Saving Plan",
+        description: errorMessage,
+        variant: "destructive",
+      });
+    } finally {
+      setIsSavingPlan(false);
+    }
+  };
+
 
   return (
     <Card className="shadow-xl bg-card text-card-foreground border-border">
@@ -182,14 +227,23 @@ export function ReelCalendar() {
             aria-label="Series Name"
           />
         </div>
-        <div className="mb-6">
+        <div className="flex flex-col sm:flex-row gap-4 mb-6">
           <Button 
             onClick={handleFetchAllIdeas} 
-            disabled={isLoadingAll || !niche.trim()} 
+            disabled={isLoadingAll || !niche.trim() || isSavingPlan} 
             className="w-full sm:w-auto bg-accent hover:bg-accent/90 text-accent-foreground"
           >
             {isLoadingAll ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Wand2 className="mr-2 h-4 w-4"/>}
             Generate All Ideas
+          </Button>
+          <Button 
+            onClick={handleSaveWeekPlan} 
+            disabled={isSavingPlan || isLoadingAll || !niche.trim() || !reelIdeas.some(idea => idea.title || idea.oneLineIdea)}
+            variant="outline"
+            className="w-full sm:w-auto border-primary text-primary hover:bg-primary/10"
+          >
+            {isSavingPlan ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4"/>}
+            Save Week Plan
           </Button>
         </div>
 

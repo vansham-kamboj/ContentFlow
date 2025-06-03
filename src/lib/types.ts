@@ -1,3 +1,4 @@
+
 import type { GenerateReelScriptOutput } from '@/ai/flows/generate-reel-script';
 
 export interface ContentType {
@@ -20,6 +21,15 @@ export interface ReelIdea {
   isGeneratingScript?: boolean;
   error?: string | null;
 }
+
+// Specific type for data being saved to Firestore to keep it clean
+export interface SavedReelDayData {
+  day: string;
+  title: string;
+  oneLineIdea: string;
+  scriptData?: GenerateReelScriptOutput | null;
+}
+
 
 export interface StoryPrompt {
   id: string;
