@@ -6,6 +6,7 @@ import useEmblaCarousel, {
   type UseEmblaCarouselType,
   type EmblaOptionsType,
   type EmblaCarouselType,
+  type EmblaPluginType,
 } from "embla-carousel-react"
 import { ArrowLeft, ArrowRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -14,7 +15,9 @@ import { cn } from "@/lib/utils"
 type CarouselApi = UseEmblaCarouselType[1]
 type UseCarouselParameters = Parameters<typeof useEmblaCarousel>
 type CarouselOptions = UseCarouselParameters[0]
-type CarouselPlugin = UseCarouselParameters[1]
+// CarouselPlugin is an array of EmblaPluginType or undefined
+type CarouselPlugins = EmblaPluginType[] | undefined;
+
 
 type CarouselContextProps = {
   carouselRef: ReturnType<typeof useEmblaCarousel>[0]
@@ -39,6 +42,13 @@ function useCarousel() {
     throw new Error("useCarousel must be used within a <Carousel />")
   }
   return context
+}
+
+interface CarouselProps {
+  opts?: CarouselOptions;
+  plugins?: CarouselPlugins;
+  orientation?: "horizontal" | "vertical";
+  setApi?: (api: CarouselApi) => void;
 }
 
 const Carousel = React.forwardRef<
@@ -69,18 +79,32 @@ const Carousel = React.forwardRef<
     const [activeSnap, setActiveSnap] = React.useState(0)
     const [slideSnaps, setSlideSnaps] = React.useState<number[]>([])
 
-    const onSelect = React.useCallback((currentApi: EmblaCarouselType) => {
-      if (!currentApi) {
-        return
+    const onSelect = React.useCallback((emblaApi: EmblaCarouselType) => {
+      if (!emblaApi) {
+        return;
       }
-      setCanScrollPrev(currentApi.canScrollPrev())
-      setCanScrollNext(currentApi.canScrollNext())
-      setActiveSnap(currentApi.selectedScrollSnap())
-      if (typeof currentApi.scrollSnaps === "function") {
-        setSlideSnaps(currentApi.scrollSnaps())
-      } else {
-        // Fallback if scrollSnaps is not a function
-        setSlideSnaps([])
+      try {
+        setCanScrollPrev(emblaApi.canScrollPrev ? emblaApi.canScrollPrev() : false);
+        setCanScrollNext(emblaApi.canScrollNext ? emblaApi.canScrollNext() : false);
+        setActiveSnap(emblaApi.selectedScrollSnap ? emblaApi.selectedScrollSnap() : 0);
+
+        if (emblaApi.scrollSnaps && typeof emblaApi.scrollSnaps === 'function') {
+          try {
+            setSlideSnaps(emblaApi.scrollSnaps());
+          } catch (e) {
+            console.error("Error calling emblaApi.scrollSnaps():", e, "API object:", emblaApi);
+            setSlideSnaps([]);
+          }
+        } else {
+          console.warn('Embla Carousel API: scrollSnaps method not available or not a function. API object:', emblaApi);
+          setSlideSnaps([]);
+        }
+      } catch (e) {
+        console.error("Error in onSelect callback:", e, "API object:", emblaApi);
+        setCanScrollPrev(false);
+        setCanScrollNext(false);
+        setActiveSnap(0);
+        setSlideSnaps([]);
       }
     }, [])
 
