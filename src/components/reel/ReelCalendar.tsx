@@ -1,3 +1,4 @@
+
 'use client';
 
 import React, { useState, useEffect, useCallback } from 'react';
@@ -38,23 +39,26 @@ export function ReelCalendar() {
   
   const { toast } = useToast();
 
-  const fetchReelIdea = useCallback(async (day: string, currentNiche: string) => {
-    setReelIdeas(prev => prev.map(idea => idea.id === day ? { ...idea, isLoading: true, error: null } : idea));
+  const fetchReelIdea = useCallback(async (day: string, currentNiche: string): Promise<string | null> => {
+    setReelIdeas(prev => prev.map(idea => idea.id === day ? { ...idea, isLoading: true, error: null, scriptData: null } : idea));
     try {
       const input: GenerateReelIdeasInput = { niche: currentNiche, dayOfWeek: day };
       const result = await generateReelIdeas(input);
       setReelIdeas(prev => prev.map(idea =>
         idea.id === day ? { ...idea, title: result.reelTitle, oneLineIdea: result.oneLineIdea, isLoading: false } : idea
       ));
+      return null; // Success
     } catch (error) {
       console.error(`Error generating idea for ${day}:`, error);
       const errorMessage = error instanceof Error ? error.message : "An unknown error occurred.";
-      setReelIdeas(prev => prev.map(idea => idea.id === day ? { ...idea, isLoading: false, error: `Failed to generate idea for ${day}. ${errorMessage}` } : idea));
+      const fullErrorText = `Failed to generate idea for ${day}. ${errorMessage}`;
+      setReelIdeas(prev => prev.map(idea => idea.id === day ? { ...idea, isLoading: false, error: fullErrorText } : idea));
       toast({
         title: `Error Generating Idea for ${day}`,
-        description: errorMessage,
+        description: errorMessage, // Keep toast concise for individual errors
         variant: "destructive",
       });
+      return fullErrorText; // Return the detailed error message
     }
   }, [toast]);
 
@@ -65,17 +69,33 @@ export function ReelCalendar() {
     }
     setIsLoadingAll(true);
     setGlobalError(null);
-    setReelIdeas(prevIdeas => prevIdeas.map(idea => ({ ...idea, title: '', oneLineIdea: '', scriptData: null, error: null }))); // Reset previous ideas and errors
+    // Reset all ideas and errors before fetching
+    setReelIdeas(prevIdeas => prevIdeas.map(idea => ({ 
+      ...initialReelIdeas.find(initIdea => initIdea.id === idea.id)!, // Reset to initial structure
+      isLoading: true, // Set loading true for all
+      error: null,
+      scriptData: null,
+    })));
 
     const promises = DAYS_OF_WEEK.map(day => fetchReelIdea(day, niche));
-    await Promise.allSettled(promises);
+    const results = await Promise.all(promises); // Each promise resolves to string (error message) or null (success)
     
     setIsLoadingAll(false);
-    // Check if any individual fetch failed and set a global error if necessary
-    if (reelIdeas.some(idea => idea.error)) {
-        setGlobalError("Some ideas could not be generated. Check individual days or try again.");
+
+    const errorsEncountered = results.filter(result => result !== null) as string[];
+    if (errorsEncountered.length > 0) {
+        const serviceUnavailableErrorPattern = /The AI service is currently experiencing high demand/i;
+        const numServiceUnavailableErrors = errorsEncountered.filter(err => serviceUnavailableErrorPattern.test(err)).length;
+
+        if (numServiceUnavailableErrors > 0 && numServiceUnavailableErrors === errorsEncountered.length) {
+            setGlobalError("The AI service is currently overloaded. Some or all ideas could not be generated. Please try again later.");
+        } else if (numServiceUnavailableErrors > 0) {
+             setGlobalError("Some ideas could not be generated. This may be partly due to AI service overload. Check individual day statuses or try again.");
+        } else {
+            setGlobalError("Some ideas could not be generated. Please check individual day statuses or try again.");
+        }
     }
-  }, [niche, fetchReelIdea, toast, reelIdeas]);
+  }, [niche, fetchReelIdea, toast]);
 
 
   const handleShuffle = (dayId: string) => {
@@ -83,14 +103,15 @@ export function ReelCalendar() {
       toast({ title: "Niche Required", description: "Please enter your niche to regenerate the idea.", variant: "destructive" });
       return;
     }
-    fetchReelIdea(dayId, niche);
+    fetchReelIdea(dayId, niche); // Individual shuffle still uses its own error display via toast and per-day error field
   };
 
   const handlePreview = async (ideaToPreview: ReelIdea) => {
     setSelectedReelForPreview(ideaToPreview);
     setIsPreviewModalOpen(true);
 
-    if (!ideaToPreview.scriptData && ideaToPreview.title && ideaToPreview.oneLineIdea) {
+    // Only fetch script if it doesn't exist and there's content to base it on
+    if (!ideaToPreview.scriptData && ideaToPreview.title && ideaToPreview.oneLineIdea && !ideaToPreview.error) {
        setReelIdeas(prev => prev.map(idea => idea.id === ideaToPreview.id ? { ...idea, isGeneratingScript: true, error: null } : idea));
       try {
         const input: GenerateReelScriptInput = {
@@ -102,23 +123,25 @@ export function ReelCalendar() {
         setReelIdeas(prev => prev.map(idea =>
           idea.id === ideaToPreview.id ? { ...idea, scriptData: scriptResult, isGeneratingScript: false } : idea
         ));
-        // Update selectedReelForPreview state for modal immediately
         setSelectedReelForPreview(prev => prev ? {...prev, scriptData: scriptResult, isGeneratingScript: false} : null);
       } catch (error) {
         console.error(`Error generating script for ${ideaToPreview.title}:`, error);
         const errorMessage = error instanceof Error ? error.message : "An unknown error occurred.";
-        setReelIdeas(prev => prev.map(idea => idea.id === ideaToPreview.id ? { ...idea, isGeneratingScript: false, error: `Failed to generate script. ${errorMessage}` } : idea));
-        setSelectedReelForPreview(prev => prev ? {...prev, error: `Failed to generate script. ${errorMessage}`, isGeneratingScript: false} : null);
+        const scriptErrorText = `Failed to generate script. ${errorMessage}`;
+        setReelIdeas(prev => prev.map(idea => idea.id === ideaToPreview.id ? { ...idea, isGeneratingScript: false, error: scriptErrorText } : idea));
+        setSelectedReelForPreview(prev => prev ? {...prev, error: scriptErrorText, isGeneratingScript: false} : null);
         toast({
           title: "Error Generating Script",
           description: errorMessage,
           variant: "destructive",
         });
       }
+    } else if (ideaToPreview.error && !ideaToPreview.scriptData) {
+        // If there was an error fetching the idea, reflect that in the modal for script generation attempt
+        setSelectedReelForPreview(prev => prev ? {...prev, error: `Cannot generate script because the initial idea failed: ${ideaToPreview.error}`, isGeneratingScript: false} : null);
     }
   };
   
-  // Effect to update modal content when scriptData changes in reelIdeas state
   useEffect(() => {
     if (selectedReelForPreview) {
       const updatedIdea = reelIdeas.find(idea => idea.id === selectedReelForPreview.id);
@@ -156,7 +179,7 @@ export function ReelCalendar() {
         {globalError && (
           <Alert variant="destructive" className="mb-4">
             <AlertCircle className="h-4 w-4" />
-            <AlertTitle>Error</AlertTitle>
+            <AlertTitle>Error Generating Ideas</AlertTitle>
             <AlertDescription>{globalError}</AlertDescription>
           </Alert>
         )}
@@ -192,10 +215,19 @@ export function ReelCalendar() {
             scriptData={selectedReelForPreview.scriptData}
             isLoadingScript={!!selectedReelForPreview.isGeneratingScript}
             error={selectedReelForPreview.error}
-            onRegenerate={() => handlePreview(selectedReelForPreview)}
+            onRegenerate={() => {
+                // Ensure we have the latest idea state for regeneration
+                const currentIdeaState = reelIdeas.find(i => i.id === selectedReelForPreview.id);
+                if (currentIdeaState) {
+                    handlePreview(currentIdeaState);
+                }
+            }}
           />
         )}
       </CardContent>
     </Card>
   );
 }
+
+
+    
