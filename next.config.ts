@@ -21,12 +21,15 @@ const nextConfig: NextConfig = {
   },
   webpack: (config, { isServer }) => {
     if (!isServer) {
-      // Exclude 'async_hooks' from client-side bundle.
-      // This is a Node.js specific module and causes errors if bundled for the browser.
-      // OpenTelemetry (used by Genkit) might try to import it.
+      // Exclude Node.js specific modules from client-side bundle.
+      // These are often pulled in by server-side dependencies like OpenTelemetry (used by Genkit) or gRPC.
       config.resolve.fallback = {
         ...config.resolve.fallback,
-        async_hooks: false,
+        async_hooks: false, // For OpenTelemetry/Genkit
+        http2: false, // For @grpc/grpc-js
+        fs: false, // Commonly needed if other Node.js core modules are pulled in
+        net: false, // For packages expecting Node.js network APIs
+        tls: false, // For packages expecting Node.js TLS/SSL APIs
       };
     }
     return config;
