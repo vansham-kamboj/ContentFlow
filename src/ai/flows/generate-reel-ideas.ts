@@ -15,6 +15,7 @@ import {z} from 'genkit';
 const GenerateReelIdeasInputSchema = z.object({
   niche: z.string().describe('The content creator\'s niche or area of focus.'),
   dayOfWeek: z.string().describe('The day of the week for which to generate the reel idea.'),
+  seriesName: z.string().optional().describe('An optional name for a content series this reel belongs to.'),
 });
 export type GenerateReelIdeasInput = z.infer<typeof GenerateReelIdeasInputSchema>;
 
@@ -34,7 +35,12 @@ const prompt = ai.definePrompt({
   output: {schema: GenerateReelIdeasOutputSchema},
   prompt: `You are a creative content strategist specializing in generating engaging reel ideas.
 
-  Based on the content creator's niche and the day of the week, generate a unique reel title and a compelling one-line idea.
+  Based on the content creator's niche and the day of the week {{#if seriesName}}as part of the "{{seriesName}}" series{{/if}}, generate a unique reel title and a compelling one-line idea.
+
+  {{#if seriesName}}
+  The reel title and one-line idea should align with the theme of the "{{seriesName}}" series.
+  The reel title should ideally reflect it's part of the series (e.g., by including the series name or a series episode number if appropriate, but prioritize a catchy title).
+  {{/if}}
 
   Niche: {{{niche}}}
   Day of the week: {{{dayOfWeek}}}
@@ -59,3 +65,4 @@ const generateReelIdeasFlow = ai.defineFlow(
     }
   }
 );
+

@@ -12,7 +12,7 @@ import type { ReelIdea } from '@/lib/types';
 import { generateReelIdeas, type GenerateReelIdeasInput } from '@/ai/flows/generate-reel-ideas';
 import { generateReelScript, type GenerateReelScriptInput } from '@/ai/flows/generate-reel-script';
 import { useToast } from '@/hooks/use-toast';
-import { AlertCircle, Loader2 } from 'lucide-react';
+import { AlertCircle, Loader2, Wand2 } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 const DAYS_OF_WEEK = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
@@ -30,6 +30,7 @@ const initialReelIdeas: ReelIdea[] = DAYS_OF_WEEK.map(day => ({
 
 export function ReelCalendar() {
   const [niche, setNiche] = useState('');
+  const [seriesName, setSeriesName] = useState('');
   const [reelIdeas, setReelIdeas] = useState<ReelIdea[]>(initialReelIdeas);
   const [isLoadingAll, setIsLoadingAll] = useState(false);
   const [globalError, setGlobalError] = useState<string | null>(null);
@@ -39,10 +40,14 @@ export function ReelCalendar() {
   
   const { toast } = useToast();
 
-  const fetchReelIdea = useCallback(async (day: string, currentNiche: string): Promise<string | null> => {
+  const fetchReelIdea = useCallback(async (day: string, currentNiche: string, currentSeriesName?: string): Promise<string | null> => {
     setReelIdeas(prev => prev.map(idea => idea.id === day ? { ...idea, isLoading: true, error: null, scriptData: null } : idea));
     try {
-      const input: GenerateReelIdeasInput = { niche: currentNiche, dayOfWeek: day };
+      const input: GenerateReelIdeasInput = { 
+        niche: currentNiche, 
+        dayOfWeek: day, 
+        seriesName: currentSeriesName || undefined 
+      };
       const result = await generateReelIdeas(input);
       setReelIdeas(prev => prev.map(idea =>
         idea.id === day ? { ...idea, title: result.reelTitle, oneLineIdea: result.oneLineIdea, isLoading: false } : idea
@@ -55,10 +60,10 @@ export function ReelCalendar() {
       setReelIdeas(prev => prev.map(idea => idea.id === day ? { ...idea, isLoading: false, error: fullErrorText } : idea));
       toast({
         title: `Error Generating Idea for ${day}`,
-        description: errorMessage, // Keep toast concise for individual errors
+        description: errorMessage, 
         variant: "destructive",
       });
-      return fullErrorText; // Return the detailed error message
+      return fullErrorText; 
     }
   }, [toast]);
 
@@ -69,16 +74,15 @@ export function ReelCalendar() {
     }
     setIsLoadingAll(true);
     setGlobalError(null);
-    // Reset all ideas and errors before fetching
     setReelIdeas(prevIdeas => prevIdeas.map(idea => ({ 
-      ...initialReelIdeas.find(initIdea => initIdea.id === idea.id)!, // Reset to initial structure
-      isLoading: true, // Set loading true for all
+      ...initialReelIdeas.find(initIdea => initIdea.id === idea.id)!, 
+      isLoading: true, 
       error: null,
       scriptData: null,
     })));
 
-    const promises = DAYS_OF_WEEK.map(day => fetchReelIdea(day, niche));
-    const results = await Promise.all(promises); // Each promise resolves to string (error message) or null (success)
+    const promises = DAYS_OF_WEEK.map(day => fetchReelIdea(day, niche, seriesName));
+    const results = await Promise.all(promises); 
     
     setIsLoadingAll(false);
 
@@ -95,7 +99,7 @@ export function ReelCalendar() {
             setGlobalError("Some ideas could not be generated. Please check individual day statuses or try again.");
         }
     }
-  }, [niche, fetchReelIdea, toast]);
+  }, [niche, seriesName, fetchReelIdea, toast]);
 
 
   const handleShuffle = (dayId: string) => {
@@ -103,14 +107,13 @@ export function ReelCalendar() {
       toast({ title: "Niche Required", description: "Please enter your niche to regenerate the idea.", variant: "destructive" });
       return;
     }
-    fetchReelIdea(dayId, niche); // Individual shuffle still uses its own error display via toast and per-day error field
+    fetchReelIdea(dayId, niche, seriesName); 
   };
 
   const handlePreview = async (ideaToPreview: ReelIdea) => {
     setSelectedReelForPreview(ideaToPreview);
     setIsPreviewModalOpen(true);
 
-    // Only fetch script if it doesn't exist and there's content to base it on
     if (!ideaToPreview.scriptData && ideaToPreview.title && ideaToPreview.oneLineIdea && !ideaToPreview.error) {
        setReelIdeas(prev => prev.map(idea => idea.id === ideaToPreview.id ? { ...idea, isGeneratingScript: true, error: null } : idea));
       try {
@@ -118,6 +121,7 @@ export function ReelCalendar() {
           reelTitle: ideaToPreview.title,
           reelIdea: ideaToPreview.oneLineIdea,
           userNiche: niche,
+          seriesName: seriesName || undefined,
         };
         const scriptResult = await generateReelScript(input);
         setReelIdeas(prev => prev.map(idea =>
@@ -137,7 +141,6 @@ export function ReelCalendar() {
         });
       }
     } else if (ideaToPreview.error && !ideaToPreview.scriptData) {
-        // If there was an error fetching the idea, reflect that in the modal for script generation attempt
         setSelectedReelForPreview(prev => prev ? {...prev, error: `Cannot generate script because the initial idea failed: ${ideaToPreview.error}`, isGeneratingScript: false} : null);
     }
   };
@@ -157,21 +160,35 @@ export function ReelCalendar() {
       <CardHeader>
         <CardTitle className="font-headline text-3xl">Reel Content Calendar</CardTitle>
         <CardDescription>
-          Enter your niche and generate a week's worth of reel ideas. Shuffle individual ideas or preview the full script.
+          Enter your niche, optionally a series name, and generate a week's worth of reel ideas. Shuffle individual ideas or preview the full script.
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="flex flex-col sm:flex-row gap-4 mb-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
           <Input
             type="text"
-            placeholder="E.g., Sustainable Fashion, AI Productivity, Home Cooking"
+            placeholder="E.g., Sustainable Fashion, AI Productivity"
             value={niche}
             onChange={(e) => setNiche(e.target.value)}
-            className="flex-grow text-base"
+            className="text-base"
             aria-label="Your Niche"
           />
-          <Button onClick={handleFetchAllIdeas} disabled={isLoadingAll || !niche.trim()} className="bg-accent hover:bg-accent/90 text-accent-foreground">
-            {isLoadingAll ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+          <Input
+            type="text"
+            placeholder="Optional: Series Name (e.g., 'Weekly Coding Tips')"
+            value={seriesName}
+            onChange={(e) => setSeriesName(e.target.value)}
+            className="text-base"
+            aria-label="Series Name"
+          />
+        </div>
+        <div className="mb-6">
+          <Button 
+            onClick={handleFetchAllIdeas} 
+            disabled={isLoadingAll || !niche.trim()} 
+            className="w-full sm:w-auto bg-accent hover:bg-accent/90 text-accent-foreground"
+          >
+            {isLoadingAll ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Wand2 className="mr-2 h-4 w-4"/>}
             Generate All Ideas
           </Button>
         </div>
@@ -216,7 +233,6 @@ export function ReelCalendar() {
             isLoadingScript={!!selectedReelForPreview.isGeneratingScript}
             error={selectedReelForPreview.error}
             onRegenerate={() => {
-                // Ensure we have the latest idea state for regeneration
                 const currentIdeaState = reelIdeas.find(i => i.id === selectedReelForPreview.id);
                 if (currentIdeaState) {
                     handlePreview(currentIdeaState);
@@ -228,6 +244,3 @@ export function ReelCalendar() {
     </Card>
   );
 }
-
-
-    
