@@ -1,6 +1,7 @@
+
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { PageWrapper } from '@/components/layout/PageWrapper';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -11,13 +12,36 @@ import { generateInstagramStoryPrompts, type GenerateInstagramStoryPromptsInput 
 import { useToast } from '@/hooks/use-toast';
 import { Loader2, Download, AlertCircle, Wand2 } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+
+const PREDEFINED_VOICE_TONES = [
+  "Friendly & Casual",
+  "Professional & Clean",
+  "Fun & Witty",
+  "Motivational & Bold",
+  "Sarcastic & Edgy",
+  "Storytelling / Narrative",
+  "Crisp & Direct",
+  "Informative but Simple",
+  "Custom...",
+];
 
 export default function StoryPage() {
   const [niche, setNiche] = useState('');
   const [prompts, setPrompts] = useState<StoryPrompt[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [selectedPredefinedTone, setSelectedPredefinedTone] = useState<string>('');
+  const [customVoiceTone, setCustomVoiceTone] = useState<string>('');
   const { toast } = useToast();
+
+  const getFinalVoiceTone = useCallback(() => {
+    if (selectedPredefinedTone === "Custom...") {
+      return customVoiceTone.trim() || undefined;
+    }
+    return selectedPredefinedTone || undefined;
+  }, [selectedPredefinedTone, customVoiceTone]);
 
   const handleGeneratePrompts = async () => {
     if (!niche.trim()) {
@@ -28,7 +52,11 @@ export default function StoryPage() {
     setError(null);
     setPrompts([]); 
     try {
-      const input: GenerateInstagramStoryPromptsInput = { niche };
+      const finalVoiceTone = getFinalVoiceTone();
+      const input: GenerateInstagramStoryPromptsInput = { 
+        niche,
+        voiceTone: finalVoiceTone,
+      };
       const result = await generateInstagramStoryPrompts(input);
       setPrompts(result.prompts.map((p, index) => ({ id: `prompt-${index}`, text: p })));
     } catch (err) {
@@ -70,24 +98,58 @@ export default function StoryPage() {
         <CardHeader>
           <CardTitle className="font-headline text-3xl">Boost Your Story Engagement</CardTitle>
           <CardDescription>
-            Enter your niche to get a list of creative Instagram Story prompts like polls, Q&As, and more.
+            Enter your niche, select a voice/tone, and get a list of creative Instagram Story prompts like polls, Q&As, and more.
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="flex flex-col sm:flex-row gap-4 mb-6">
-            <Input
-              type="text"
-              placeholder="E.g., Fitness, Travel, Tech Gadgets"
-              value={niche}
-              onChange={(e) => setNiche(e.target.value)}
-              className="flex-grow text-base"
-              aria-label="Your Niche for Instagram Stories"
-            />
-            <Button onClick={handleGeneratePrompts} disabled={isLoading || !niche.trim()} className="bg-accent hover:bg-accent/90 text-accent-foreground">
-              {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Wand2 className="mr-2 h-4 w-4" />}
-              Generate Prompts
-            </Button>
+          <div className="space-y-6 mb-6">
+            <div>
+              <Label htmlFor="nicheInputStory" className="mb-2 block text-sm font-medium">Your Niche</Label>
+              <Input
+                id="nicheInputStory"
+                type="text"
+                placeholder="E.g., Fitness, Travel, Tech Gadgets"
+                value={niche}
+                onChange={(e) => setNiche(e.target.value)}
+                className="flex-grow text-base"
+                aria-label="Your Niche for Instagram Stories"
+              />
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="voiceToneSelectStory" className="mb-2 block text-sm font-medium">Preferred Voice & Tone</Label>
+                <Select value={selectedPredefinedTone} onValueChange={setSelectedPredefinedTone}>
+                  <SelectTrigger id="voiceToneSelectStory">
+                    <SelectValue placeholder="Select a tone (or 'Custom...')" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {PREDEFINED_VOICE_TONES.map(tone => (
+                      <SelectItem key={tone} value={tone}>{tone}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              {selectedPredefinedTone === "Custom..." && (
+                <div>
+                  <Label htmlFor="customVoiceToneStory" className="mb-2 block text-sm font-medium">Custom Voice & Tone</Label>
+                  <Input
+                    id="customVoiceToneStory"
+                    type="text"
+                    placeholder="Describe your custom tone"
+                    value={customVoiceTone}
+                    onChange={(e) => setCustomVoiceTone(e.target.value)}
+                    className="text-base"
+                  />
+                </div>
+              )}
+            </div>
           </div>
+          
+          <Button onClick={handleGeneratePrompts} disabled={isLoading || !niche.trim()} className="bg-accent hover:bg-accent/90 text-accent-foreground w-full sm:w-auto mb-6">
+            {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Wand2 className="mr-2 h-4 w-4" />}
+            Generate Prompts
+          </Button>
 
           {error && (
             <Alert variant="destructive" className="mb-4">

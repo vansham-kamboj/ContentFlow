@@ -14,6 +14,7 @@ import {z} from 'genkit';
 
 const GenerateInstagramStoryPromptsInputSchema = z.object({
   niche: z.string().describe('The specific niche or topic for the Instagram Story prompts.'),
+  voiceTone: z.string().optional().describe('The desired voice and tone for the generated content (e.g., Friendly & Casual, Professional & Clean, or a custom description).'),
 });
 export type GenerateInstagramStoryPromptsInput = z.infer<typeof GenerateInstagramStoryPromptsInputSchema>;
 
@@ -35,6 +36,13 @@ const prompt = ai.definePrompt({
   input: {schema: GenerateInstagramStoryPromptsInputSchema},
   output: {schema: GenerateInstagramStoryPromptsOutputSchema},
   prompt: `You are a social media expert specializing in creating engaging Instagram Stories.
+
+  {{#if voiceTone}}
+  Adopt the following voice and tone for your response: "{{voiceTone}}".
+  This means you should tailor vocabulary, sentence structure, emotional vibe, and formality to match this tone.
+  {{else}}
+  Use a generally engaging, helpful, and clear tone for your response.
+  {{/if}}
 
   Based on the user's niche, generate a list of creative and interactive Instagram Story prompts, including polls, Q&A, 'This or That' scenarios, and opinion sliders, that will boost audience interaction.
 

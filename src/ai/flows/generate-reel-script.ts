@@ -15,8 +15,9 @@ import {z} from 'genkit';
 const GenerateReelScriptInputSchema = z.object({
   reelTitle: z.string().describe('The title of the reel.'),
   reelIdea: z.string().describe('A one-line description of the reel idea.'),
-  userNiche: z.string().describe('The content creator\'s niche or area of expertise.'),
+  userNiche: z.string().describe("The content creator's niche or area of expertise."),
   seriesName: z.string().optional().describe('An optional name for a content series this reel belongs to.'),
+  voiceTone: z.string().optional().describe('The desired voice and tone for the generated content (e.g., Friendly & Casual, Professional & Clean, or a custom description).'),
 });
 export type GenerateReelScriptInput = z.infer<typeof GenerateReelScriptInputSchema>;
 
@@ -36,6 +37,13 @@ const prompt = ai.definePrompt({
   input: {schema: GenerateReelScriptInputSchema},
   output: {schema: GenerateReelScriptOutputSchema},
   prompt: `You are a social media expert specializing in creating engaging reels.
+
+  {{#if voiceTone}}
+  Adopt the following voice and tone for your response: "{{voiceTone}}".
+  This means you should tailor vocabulary, sentence structure, emotional vibe, and formality to match this tone.
+  {{else}}
+  Use a generally engaging, helpful, and clear tone for your response.
+  {{/if}}
 
   Based on the reel idea, the user's niche, and an optional series name, generate a short reel script, a ready-to-use caption, and a list of trending hashtags.
 
@@ -76,4 +84,3 @@ const generateReelScriptFlow = ai.defineFlow(
     }
   }
 );
-

@@ -1,3 +1,4 @@
+
 'use client';
 
 import React, { useState } from 'react';
@@ -24,10 +25,12 @@ export default function LinkedInPage() {
     setPostData(null);
     setCurrentTopic(data.topic);
     try {
+      // The voiceTone is now correctly determined in LinkedInPostForm and passed in data
       const input: GenerateLinkedInPostInput = {
         theme: data.theme,
         topic: data.topic,
         includeTrendingInsight: data.includeTrendingInsight,
+        voiceTone: data.voiceTone, // Use the voiceTone from the form data
       };
       const result = await generateLinkedInPost(input);
       setPostData(result);
@@ -50,7 +53,7 @@ export default function LinkedInPage() {
         <CardHeader>
           <CardTitle className="font-headline text-3xl">Create Your Next LinkedIn Post</CardTitle>
           <CardDescription>
-            Select a theme, provide a topic, and let AI help you generate compelling content.
+            Select a theme, provide a topic, choose your voice, and let AI help you generate compelling content.
           </CardDescription>
         </CardHeader>
         <CardContent>

@@ -14,8 +14,22 @@ import { generateReelScript, type GenerateReelScriptInput } from '@/ai/flows/gen
 import { useToast } from '@/hooks/use-toast';
 import { AlertCircle, Loader2, Wand2 } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 const DAYS_OF_WEEK = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+
+const PREDEFINED_VOICE_TONES = [
+  "Friendly & Casual",
+  "Professional & Clean",
+  "Fun & Witty",
+  "Motivational & Bold",
+  "Sarcastic & Edgy",
+  "Storytelling / Narrative",
+  "Crisp & Direct",
+  "Informative but Simple",
+  "Custom...",
+];
 
 const initialReelIdeas: ReelIdea[] = DAYS_OF_WEEK.map(day => ({
   id: day,
@@ -31,6 +45,9 @@ const initialReelIdeas: ReelIdea[] = DAYS_OF_WEEK.map(day => ({
 export function ReelCalendar() {
   const [niche, setNiche] = useState('');
   const [seriesName, setSeriesName] = useState('');
+  const [selectedPredefinedTone, setSelectedPredefinedTone] = useState<string>('');
+  const [customVoiceTone, setCustomVoiceTone] = useState<string>('');
+
   const [reelIdeas, setReelIdeas] = useState<ReelIdea[]>(initialReelIdeas);
   const [isLoadingAll, setIsLoadingAll] = useState(false);
   const [globalError, setGlobalError] = useState<string | null>(null);
@@ -40,13 +57,21 @@ export function ReelCalendar() {
   
   const { toast } = useToast();
 
-  const fetchReelIdea = useCallback(async (day: string, currentNiche: string, currentSeriesName?: string): Promise<string | null> => {
+  const getFinalVoiceTone = useCallback(() => {
+    if (selectedPredefinedTone === "Custom...") {
+      return customVoiceTone.trim() || undefined;
+    }
+    return selectedPredefinedTone || undefined;
+  }, [selectedPredefinedTone, customVoiceTone]);
+
+  const fetchReelIdea = useCallback(async (day: string, currentNiche: string, currentSeriesName?: string, currentVoiceTone?: string): Promise<string | null> => {
     setReelIdeas(prev => prev.map(idea => idea.id === day ? { ...idea, isLoading: true, error: null, scriptData: null } : idea));
     try {
       const input: GenerateReelIdeasInput = { 
         niche: currentNiche, 
         dayOfWeek: day, 
-        seriesName: currentSeriesName || undefined 
+        seriesName: currentSeriesName || undefined,
+        voiceTone: currentVoiceTone,
       };
       const result = await generateReelIdeas(input);
       setReelIdeas(prev => prev.map(idea =>
@@ -76,7 +101,8 @@ export function ReelCalendar() {
       scriptData: null,
     })));
 
-    const promises = DAYS_OF_WEEK.map(day => fetchReelIdea(day, niche, seriesName));
+    const finalVoiceTone = getFinalVoiceTone();
+    const promises = DAYS_OF_WEEK.map(day => fetchReelIdea(day, niche, seriesName, finalVoiceTone));
     const results = await Promise.all(promises); 
     
     setIsLoadingAll(false);
@@ -99,7 +125,7 @@ export function ReelCalendar() {
     } else {
         toast({ title: "Ideas Generated!", description: "All reel ideas for the week have been generated.", duration: 3000});
     }
-  }, [niche, seriesName, fetchReelIdea, toast]);
+  }, [niche, seriesName, fetchReelIdea, toast, getFinalVoiceTone]);
 
 
   const handleShuffle = (dayId: string) => {
@@ -107,7 +133,8 @@ export function ReelCalendar() {
       toast({ title: "Niche Required", description: "Please enter your niche to regenerate the idea.", variant: "destructive" });
       return;
     }
-    fetchReelIdea(dayId, niche, seriesName).then(error => {
+    const finalVoiceTone = getFinalVoiceTone();
+    fetchReelIdea(dayId, niche, seriesName, finalVoiceTone).then(error => {
         if (error) {
             toast({ title: `Error Regenerating Idea for ${dayId}`, description: error, variant: "destructive" });
         } else {
@@ -123,11 +150,13 @@ export function ReelCalendar() {
     if (!ideaToPreview.scriptData && ideaToPreview.title && ideaToPreview.oneLineIdea && !ideaToPreview.error) {
        setReelIdeas(prev => prev.map(idea => idea.id === ideaToPreview.id ? { ...idea, isGeneratingScript: true, error: null } : idea));
       try {
+        const finalVoiceTone = getFinalVoiceTone();
         const input: GenerateReelScriptInput = {
           reelTitle: ideaToPreview.title,
           reelIdea: ideaToPreview.oneLineIdea,
           userNiche: niche,
           seriesName: seriesName || undefined,
+          voiceTone: finalVoiceTone,
         };
         const scriptResult = await generateReelScript(input);
         setReelIdeas(prev => prev.map(idea =>
@@ -165,7 +194,7 @@ export function ReelCalendar() {
       <CardHeader>
         <CardTitle className="font-headline text-3xl">Reel Content Calendar</CardTitle>
         <CardDescription>
-          Enter your niche, optionally a series name, and generate a week's worth of reel ideas. Shuffle individual ideas or preview the full script.
+          Enter your niche, optionally a series name, and your preferred voice/tone, then generate a week's worth of reel ideas. Shuffle individual ideas or preview the full script.
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -187,6 +216,36 @@ export function ReelCalendar() {
             aria-label="Series Name"
           />
         </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+          <div>
+            <Label htmlFor="voiceToneSelect" className="mb-2 block text-sm font-medium">Preferred Voice & Tone</Label>
+            <Select value={selectedPredefinedTone} onValueChange={setSelectedPredefinedTone}>
+              <SelectTrigger id="voiceToneSelect">
+                <SelectValue placeholder="Select a tone (or 'Custom...')" />
+              </SelectTrigger>
+              <SelectContent>
+                {PREDEFINED_VOICE_TONES.map(tone => (
+                  <SelectItem key={tone} value={tone}>{tone}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          {selectedPredefinedTone === "Custom..." && (
+            <div>
+              <Label htmlFor="customVoiceTone" className="mb-2 block text-sm font-medium">Custom Voice & Tone</Label>
+              <Input
+                id="customVoiceTone"
+                type="text"
+                placeholder="Describe your custom tone (e.g., 'Academic but engaging')"
+                value={customVoiceTone}
+                onChange={(e) => setCustomVoiceTone(e.target.value)}
+                className="text-base"
+              />
+            </div>
+          )}
+        </div>
+        
         <div className="flex flex-col sm:flex-row gap-4 mb-6">
           <Button 
             onClick={handleFetchAllIdeas} 

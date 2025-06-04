@@ -13,9 +13,10 @@ import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
 
 const GenerateReelIdeasInputSchema = z.object({
-  niche: z.string().describe('The content creator\'s niche or area of focus.'),
+  niche: z.string().describe("The content creator's niche or area of focus."),
   dayOfWeek: z.string().describe('The day of the week for which to generate the reel idea.'),
   seriesName: z.string().optional().describe('An optional name for a content series this reel belongs to.'),
+  voiceTone: z.string().optional().describe('The desired voice and tone for the generated content (e.g., Friendly & Casual, Professional & Clean, or a custom description).'),
 });
 export type GenerateReelIdeasInput = z.infer<typeof GenerateReelIdeasInputSchema>;
 
@@ -34,6 +35,13 @@ const prompt = ai.definePrompt({
   input: {schema: GenerateReelIdeasInputSchema},
   output: {schema: GenerateReelIdeasOutputSchema},
   prompt: `You are a creative content strategist specializing in generating engaging reel ideas.
+
+  {{#if voiceTone}}
+  Adopt the following voice and tone for your response: "{{voiceTone}}".
+  This means you should tailor vocabulary, sentence structure, emotional vibe, and formality to match this tone.
+  {{else}}
+  Use a generally engaging, helpful, and clear tone for your response.
+  {{/if}}
 
   Based on the content creator's niche and the day of the week {{#if seriesName}}as part of the "{{seriesName}}" series{{/if}}, generate a unique reel title and a compelling one-line idea.
 
@@ -65,4 +73,3 @@ const generateReelIdeasFlow = ai.defineFlow(
     }
   }
 );
-

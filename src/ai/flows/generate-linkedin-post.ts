@@ -29,6 +29,7 @@ const GenerateLinkedInPostInputSchema = z.object({
     .describe(
       'Whether to include insights on why the chosen topic is trending.'
     ),
+  voiceTone: z.string().optional().describe('The desired voice and tone for the generated content (e.g., Friendly & Casual, Professional & Clean, or a custom description).'),
 });
 export type GenerateLinkedInPostInput =
   z.infer<typeof GenerateLinkedInPostInputSchema>;
@@ -53,7 +54,16 @@ const generateLinkedInPostPrompt = ai.definePrompt({
   name: 'generateLinkedInPostPrompt',
   input: {schema: GenerateLinkedInPostInputSchema},
   output: {schema: GenerateLinkedInPostOutputSchema},
-  prompt: `You are a LinkedIn expert. Generate an insightful and authentic LinkedIn post based on the following theme and topic:
+  prompt: `You are a LinkedIn expert.
+  
+  {{#if voiceTone}}
+  Adopt the following voice and tone for your response: "{{voiceTone}}".
+  This means you should tailor vocabulary, sentence structure, emotional vibe, and formality to match this tone.
+  {{else}}
+  Use a generally engaging, helpful, and clear tone for your response.
+  {{/if}}
+
+  Generate an insightful and authentic LinkedIn post based on the following theme and topic:
 
 Theme: {{{theme}}}
 Topic: {{{topic}}}
