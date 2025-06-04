@@ -2,7 +2,6 @@
 'use client';
 
 import React from 'react';
-import { PageWrapper } from '@/components/layout/PageWrapper';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import Image from 'next/image';
 
@@ -96,26 +95,38 @@ export default function FeedPage() {
   const row3Items = placeholderFeedItems.slice(13, 20);
 
   return (
-    <PageWrapper title="Public Feed" description="See what everyone is sharing in our dynamic feed!">
-      <div className="mb-8 text-center">
-        <p className="text-muted-foreground mt-2">
-          Hover over a row to pause the animation.
-        </p>
+    <>
+      {/* Header section, constrained and centered */}
+      <div className="container mx-auto px-4 pt-8"> {/* Added pt-8 for top padding */}
+        <header className="mb-8 text-center">
+          <h1 className="font-headline text-4xl font-bold mb-2 text-primary-foreground">Public Feed</h1>
+          <p className="text-lg text-muted-foreground">See what everyone is sharing in our dynamic feed!</p>
+        </header>
+        <div className="text-center"> {/* Removed mb-8 to avoid double margin with section below */}
+          <p className="text-muted-foreground mt-2">
+            Hover over a row to pause the animation.
+          </p>
+        </div>
       </div>
-      
-      <div className="flex flex-col gap-2 -mx-4"> {/* Negative margin to utilize full PageWrapper width */}
-        <FeedRow items={row1Items} animationClass="animate-scroll-left-slow" ariaLabel="Featured posts, slow scroll"/>
-        <FeedRow items={row2Items} animationClass="animate-scroll-left-medium" ariaLabel="Trending content, medium scroll"/>
-        <FeedRow items={row3Items} animationClass="animate-scroll-left-fast" ariaLabel="Latest shares, fast scroll"/>
+
+      {/* Full-width feed section */}
+      <div className="w-full overflow-x-hidden py-8"> {/* Added py-8 for vertical spacing */}
+        <div className="flex flex-col gap-2">
+          <FeedRow items={row1Items} animationClass="animate-scroll-left-slow" ariaLabel="Featured posts, slow scroll"/>
+          <FeedRow items={row2Items} animationClass="animate-scroll-left-medium" ariaLabel="Trending content, medium scroll"/>
+          <FeedRow items={row3Items} animationClass="animate-scroll-left-fast" ariaLabel="Latest shares, fast scroll"/>
+        </div>
       </div>
 
        {placeholderFeedItems.length === 0 && (
-        <Card className="col-span-full mt-8">
-          <CardContent className="p-10 text-center">
-            <p className="text-muted-foreground">No posts shared yet. Content will appear here!</p>
-          </CardContent>
-        </Card>
+        <div className="container mx-auto px-4 pb-8"> {/* Added pb-8 for bottom padding */}
+          <Card className="col-span-full"> {/* Removed mt-8 as parent div now has py-8 */}
+            <CardContent className="p-10 text-center">
+              <p className="text-muted-foreground">No posts shared yet. Content will appear here!</p>
+            </CardContent>
+          </Card>
+        </div>
       )}
-    </PageWrapper>
+    </>
   );
 }
