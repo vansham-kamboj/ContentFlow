@@ -13,9 +13,11 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { UserProfileMenu } from '@/components/auth/UserProfileMenu'; // Added import
 
 const mainNavLinks = [
   { href: '/', label: 'Home' },
+  { href: '/feed', label: 'Public Feed' }, // Link to the public feed
 ];
 
 const toolLinks = [
@@ -78,12 +80,15 @@ export function Navbar() {
         </nav>
 
         <div className="hidden md:flex items-center ml-auto">
-          {/* UserProfileMenu removed here */}
+          <UserProfileMenu /> {/* Added UserProfileMenu */}
         </div>
 
 
         {/* Mobile Navigation */}
-        <div className="md:hidden ml-auto">
+        <div className="md:hidden ml-auto flex items-center"> {/* Added flex and items-center */}
+          <div className="mr-2"> {/* Added margin for spacing */}
+            <UserProfileMenu /> {/* Added UserProfileMenu for mobile */}
+          </div>
           <Sheet>
             <SheetTrigger asChild>
               <Button variant="ghost" size="icon">
@@ -129,9 +134,7 @@ export function Navbar() {
                   </div>
                 </div>
               </nav>
-              <div className="mt-auto pt-6 border-t border-border">
-                {/* UserProfileMenu removed here */}
-              </div>
+              {/* UserProfileMenu removed from sheet footer as it's now in the header for mobile */}
             </SheetContent>
           </Sheet>
         </div>
