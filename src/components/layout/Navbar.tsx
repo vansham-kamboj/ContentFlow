@@ -5,11 +5,20 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import { Menu, Rocket } from 'lucide-react';
+import { Menu, Rocket, ChevronDown } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
-const navLinks = [
+const mainNavLinks = [
   { href: '/', label: 'Home' },
+];
+
+const toolLinks = [
   { href: '/reel', label: 'Reel Planner' },
   { href: '/story', label: 'Story Prompts' },
   { href: '/linkedin', label: 'LinkedIn Posts' },
@@ -17,6 +26,8 @@ const navLinks = [
 
 export function Navbar() {
   const pathname = usePathname();
+
+  const isToolLinkActive = toolLinks.some(link => pathname === link.href);
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -27,19 +38,46 @@ export function Navbar() {
         </Link>
 
         {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center space-x-6 text-sm font-medium">
-          {navLinks.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className={cn(
-                "transition-colors hover:text-accent",
-                pathname === link.href ? "text-accent font-semibold" : "text-muted-foreground"
-              )}
-            >
-              {link.label}
-            </Link>
+        <nav className="hidden md:flex items-center space-x-1 text-sm font-medium">
+          {mainNavLinks.map((link) => (
+            <Button key={link.href} variant="ghost" asChild className={cn(
+              "transition-colors hover:text-accent hover:bg-transparent px-3",
+              pathname === link.href ? "text-accent font-semibold" : "text-muted-foreground"
+            )}>
+              <Link
+                href={link.href}
+              >
+                {link.label}
+              </Link>
+            </Button>
           ))}
+
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className={cn(
+                "transition-colors hover:text-accent hover:bg-transparent px-3 outline-none",
+                isToolLinkActive ? "text-accent font-semibold" : "text-muted-foreground"
+              )}>
+                Explore tools
+                <ChevronDown className="relative top-[1px] ml-1 h-4 w-4 transition duration-200 group-data-[state=open]:rotate-180" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="w-56" align="end">
+              {toolLinks.map((link) => (
+                <DropdownMenuItem key={link.href} asChild className="cursor-pointer">
+                  <Link
+                    href={link.href}
+                    className={cn(
+                      "w-full",
+                      pathname === link.href ? "text-accent font-semibold" : ""
+                    )}
+                  >
+                    {link.label}
+                  </Link>
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
         </nav>
 
         {/* Mobile Navigation */}
@@ -59,7 +97,7 @@ export function Navbar() {
                 </Link>
               </div>
               <nav className="flex flex-col space-y-4">
-                {navLinks.map((link) => (
+                {mainNavLinks.map((link) => (
                   <Link
                     key={link.href}
                     href={link.href}
@@ -71,6 +109,23 @@ export function Navbar() {
                     {link.label}
                   </Link>
                 ))}
+                <div>
+                  <p className="text-lg text-muted-foreground mb-2 mt-2">Explore tools</p>
+                  <div className="flex flex-col space-y-3 pl-4">
+                    {toolLinks.map((link) => (
+                       <Link
+                        key={link.href}
+                        href={link.href}
+                        className={cn(
+                          "text-lg transition-colors hover:text-accent",
+                          pathname === link.href ? "text-accent font-semibold" : "text-foreground"
+                        )}
+                      >
+                        {link.label}
+                      </Link>
+                    ))}
+                  </div>
+                </div>
               </nav>
             </SheetContent>
           </Sheet>
