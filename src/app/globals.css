@@ -106,3 +106,32 @@ body {
     background-attachment: fixed; /* Ensure gradients cover the whole viewport and don't scroll */
   }
 }
+
+@layer utilities {
+  .feed-fade-edges {
+    /* This class is now primarily a marker; specific styling is in feed/page.tsx or this file if preferred */
+    /* Ensure it has position: relative if pseudo-elements are positioned absolutely relative to it. */
+    /* The 'relative' class is added directly in the JSX for simplicity here. */
+  }
+
+  .dark .feed-fade-edges::before,
+  .dark .feed-fade-edges::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 150px; /* Increased width for a softer fade */
+    z-index: 2; /* Ensures fade is above content but below other UI like navbar */
+    pointer-events: none; /* Allows clicks to pass through */
+  }
+
+  .dark .feed-fade-edges::before {
+    left: 0;
+    background: linear-gradient(to right, hsl(var(--background)) 25%, var(--gradient-transparent-bg) 100%);
+  }
+
+  .dark .feed-fade-edges::after {
+    right: 0;
+    background: linear-gradient(to left, hsl(var(--background)) 25%, var(--gradient-transparent-bg) 100%);
+  }
+}

@@ -97,20 +97,20 @@ export default function FeedPage() {
   return (
     <>
       {/* Header section, constrained and centered */}
-      <div className="container mx-auto px-4 pt-8"> {/* Added pt-8 for top padding */}
+      <div className="container mx-auto px-4 pt-8">
         <header className="mb-8 text-center">
           <h1 className="font-headline text-4xl font-bold mb-2 text-primary-foreground">Public Feed</h1>
           <p className="text-lg text-muted-foreground">See what everyone is sharing in our dynamic feed!</p>
         </header>
-        <div className="text-center"> {/* Removed mb-8 to avoid double margin with section below */}
+        <div className="text-center">
           <p className="text-muted-foreground mt-2">
             Hover over a row to pause the animation.
           </p>
         </div>
       </div>
 
-      {/* Full-width feed section */}
-      <div className="w-full overflow-x-hidden py-8"> {/* Added py-8 for vertical spacing */}
+      {/* Full-width feed section with edge fade */}
+      <div className="relative w-full overflow-x-hidden py-8 feed-fade-edges">
         <div className="flex flex-col gap-2">
           <FeedRow items={row1Items} animationClass="animate-scroll-left-slow" ariaLabel="Featured posts, slow scroll"/>
           <FeedRow items={row2Items} animationClass="animate-scroll-left-medium" ariaLabel="Trending content, medium scroll"/>
@@ -119,8 +119,8 @@ export default function FeedPage() {
       </div>
 
        {placeholderFeedItems.length === 0 && (
-        <div className="container mx-auto px-4 pb-8"> {/* Added pb-8 for bottom padding */}
-          <Card className="col-span-full"> {/* Removed mt-8 as parent div now has py-8 */}
+        <div className="container mx-auto px-4 pb-8">
+          <Card className="col-span-full">
             <CardContent className="p-10 text-center">
               <p className="text-muted-foreground">No posts shared yet. Content will appear here!</p>
             </CardContent>
