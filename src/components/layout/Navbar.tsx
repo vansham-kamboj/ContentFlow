@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import { Menu, Rocket, ChevronDown, Wand2 } from 'lucide-react'; // Added Wand2
+import { Menu, Rocket, ChevronDown, Wand2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import {
   DropdownMenu,
@@ -13,7 +13,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { UserProfileMenu } from '@/components/auth/UserProfileMenu';
 
 const mainNavLinks = [
   { href: '/', label: 'Home' },
@@ -24,7 +23,7 @@ const toolLinks = [
   { href: '/reel', label: 'Reel Planner', icon: undefined },
   { href: '/story', label: 'Story Prompts', icon: undefined },
   { href: '/linkedin', label: 'LinkedIn Posts', icon: undefined },
-  { href: '/hook-generator', label: 'Hook Generator', icon: Wand2 }, // Added Hook Generator
+  { href: '/hook-generator', label: 'Hook Generator', icon: Wand2 },
 ];
 
 export function Navbar() {
@@ -68,7 +67,7 @@ export function Navbar() {
                   <Link
                     href={link.href}
                     className={cn(
-                      "w-full flex items-center", // Added flex items-center
+                      "w-full flex items-center", 
                       pathname === link.href ? "text-accent font-semibold" : ""
                     )}
                   >
@@ -81,16 +80,8 @@ export function Navbar() {
           </DropdownMenu>
         </nav>
 
-        <div className="hidden md:flex items-center ml-auto">
-          <UserProfileMenu />
-        </div>
-
-
         {/* Mobile Navigation */}
         <div className="md:hidden ml-auto flex items-center">
-          <div className="mr-2">
-            <UserProfileMenu />
-          </div>
           <Sheet>
             <SheetTrigger asChild>
               <Button variant="ghost" size="icon">
@@ -126,7 +117,7 @@ export function Navbar() {
                         key={link.href}
                         href={link.href}
                         className={cn(
-                          "text-lg transition-colors hover:text-accent flex items-center", // Added flex items-center
+                          "text-lg transition-colors hover:text-accent flex items-center", 
                           pathname === link.href ? "text-accent font-semibold" : "text-foreground"
                         )}
                       >
