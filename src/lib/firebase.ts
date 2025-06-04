@@ -15,13 +15,14 @@ const firebaseConfig = {
 
 let app: FirebaseApp | null = null;
 let db: Firestore | null = null;
-let authInstance: Auth | null = null;
+let authInstance: Auth | null = null; // Renamed to avoid conflict with export name 'auth'
 
+// These keys are essential for Firebase to initialize core services, especially auth.
 const requiredEnvVars: (keyof typeof firebaseConfig)[] = [
   'apiKey',
   'authDomain',
   'projectId',
-  'appId', // appId is also crucial for initialization
+  'appId', // App ID is crucial for Firebase services
 ];
 
 const missingEnvVars = requiredEnvVars.filter(key => !firebaseConfig[key]);
@@ -33,6 +34,8 @@ if (missingEnvVars.length > 0) {
   console.error(
     'Please ensure your .env file is correctly populated with variables prefixed with NEXT_PUBLIC_ (e.g., NEXT_PUBLIC_FIREBASE_API_KEY) and that you have restarted your development server.'
   );
+  // If essential keys are missing, we might not want to proceed with initialization,
+  // as it will definitely fail for services like Auth.
 } else {
   if (getApps().length === 0) {
     try {
@@ -48,15 +51,15 @@ if (missingEnvVars.length > 0) {
   if (app) {
     try {
       db = getFirestore(app);
-      authInstance = getAuth(app); // Renamed to authInstance to avoid conflict with export name
+      authInstance = getAuth(app);
     } catch (error) {
       console.error("Firebase Initialization Error: Failed to initialize Firestore or Auth services.", error);
       // This is where auth/invalid-api-key would typically be caught if app initialized but config was bad
       db = null;
       authInstance = null;
     }
-  } else {
-    console.error("Firebase Initialization Error: Firebase app object is not available. Firestore and Auth services cannot be initialized.");
+  } else if (missingEnvVars.length === 0) { // Only log this if we didn't already log about missing env vars
+    console.error("Firebase Initialization Error: Firebase app object is not available, but all required env vars were present. This is unexpected.");
   }
 }
 
