@@ -19,7 +19,7 @@ const LOGGED_IN_USERNAME_KEY = 'contentFlowLoggedInUsername'; // Key for local s
 
 export function AuthProviderWrapper({ children }: { children: ReactNode }) {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true); // Start true to handle initial load/re-login
   const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
 
@@ -57,40 +57,38 @@ export function AuthProviderWrapper({ children }: { children: ReactNode }) {
         }
         toast({ title: "Login Successful", description: `Welcome back, ${data.name || data.username}!` });
       } else {
-        setError(data.error || "User not found or invalid credentials.");
+        // Use the error message from the API response
+        const apiError = data.error || "Login failed. Please check your username.";
+        setError(apiError);
         setCurrentUser(null);
         if (typeof window !== 'undefined') {
           localStorage.removeItem(LOGGED_IN_USERNAME_KEY);
         }
-        toast({ title: "Login Failed", description: data.error || "User not found or invalid credentials.", variant: "destructive" });
+        toast({ title: "Login Failed", description: apiError, variant: "destructive" });
       }
     } catch (err) {
       console.error("Login error:", err);
-      const errorMessage = err instanceof Error ? err.message : "An unknown error occurred during login.";
+      const errorMessage = "Could not connect to login service. Please try again later.";
       setError(errorMessage);
       setCurrentUser(null);
       if (typeof window !== 'undefined') {
         localStorage.removeItem(LOGGED_IN_USERNAME_KEY);
       }
-      toast({ title: "Login Error", description: "Could not connect to login service.", variant: "destructive" });
+      toast({ title: "Login Error", description: errorMessage, variant: "destructive" });
     } finally {
       setIsLoading(false);
     }
   }, [toast]);
 
   useEffect(() => {
-    // Check local storage for persisted username on initial load
     const persistedUsername = typeof window !== 'undefined' ? localStorage.getItem(LOGGED_IN_USERNAME_KEY) : null;
     if (persistedUsername) {
-      // Attempt to "re-login" to fetch fresh user data if necessary, or simply set state
-      // For this example, we'll re-call loginWithUsername to ensure data consistency
-      // and handle cases where user details might have changed server-side.
-      loginWithUsername(persistedUsername);
+      loginWithUsername(persistedUsername).finally(() => setIsLoading(false));
     } else {
-      setIsLoading(false); // No persisted user, stop loading
+      setIsLoading(false); 
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); // loginWithUsername is stable due to useCallback
+  }, []); // loginWithUsername is stable, run once on mount.
 
   return (
     <AuthContext.Provider value={{ currentUser, isLoading, error, loginWithUsername, logout }}>
