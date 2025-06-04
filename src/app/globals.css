@@ -127,11 +127,11 @@ body {
 
   .dark .feed-fade-edges::before {
     left: 0;
-    background: linear-gradient(to right, hsl(var(--background)) 25%, var(--gradient-transparent-bg) 100%);
+    background: linear-gradient(to right, hsl(var(--background)) 25%, transparent 100%);
   }
 
   .dark .feed-fade-edges::after {
     right: 0;
-    background: linear-gradient(to left, hsl(var(--background)) 25%, var(--gradient-transparent-bg) 100%);
+    background: linear-gradient(to left, hsl(var(--background)) 25%, transparent 100%);
   }
 }
