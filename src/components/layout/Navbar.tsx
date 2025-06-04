@@ -13,6 +13,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { UserProfileMenu } from '@/components/auth/UserProfileMenu'; // Added import
 
 const mainNavLinks = [
   { href: '/', label: 'Home' },
@@ -61,14 +62,14 @@ export function Navbar() {
                 <ChevronDown className="relative top-[1px] ml-1 h-4 w-4 transition duration-200 group-data-[state=open]:rotate-180" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-56" align="start">
+            <DropdownMenuContent className="w-56 bg-card border-border" align="start">
               {toolLinks.map((link) => (
-                <DropdownMenuItem key={link.href} asChild className="cursor-pointer">
+                <DropdownMenuItem key={link.href} asChild className="cursor-pointer hover:bg-muted focus:bg-muted">
                   <Link
                     href={link.href}
                     className={cn(
                       "w-full flex items-center", 
-                      pathname === link.href ? "text-accent font-semibold" : ""
+                      pathname === link.href ? "text-accent font-semibold" : "text-card-foreground"
                     )}
                   >
                     {link.icon && <link.icon className="mr-2 h-4 w-4" /> }
@@ -80,8 +81,15 @@ export function Navbar() {
           </DropdownMenu>
         </nav>
 
+        <div className="hidden md:flex items-center ml-auto">
+          <UserProfileMenu />
+        </div>
+
         {/* Mobile Navigation */}
         <div className="md:hidden ml-auto flex items-center">
+           <div className="mr-4"> {/* Added wrapper for mobile UserProfileMenu */}
+            <UserProfileMenu />
+          </div>
           <Sheet>
             <SheetTrigger asChild>
               <Button variant="ghost" size="icon">

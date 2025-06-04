@@ -4,6 +4,7 @@ import './globals.css';
 import { Toaster } from "@/components/ui/toaster";
 import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
+import { AuthProviderWrapper } from '@/contexts/AuthContext'; // Updated import
 
 export const metadata: Metadata = {
   title: 'ContentFlow',
@@ -23,12 +24,14 @@ export default function RootLayout({
         <link href="https://fonts.googleapis.com/css2?family=PT+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet" />
       </head>
       <body className="font-body antialiased min-h-screen flex flex-col">
+        <AuthProviderWrapper> {/* Changed to AuthProviderWrapper */}
           <Navbar />
           <main className="flex-grow">
             {children}
           </main>
           <Footer />
           <Toaster />
+        </AuthProviderWrapper>
       </body>
     </html>
   );
