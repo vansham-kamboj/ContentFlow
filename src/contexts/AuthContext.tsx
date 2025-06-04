@@ -2,24 +2,24 @@
 'use client';
 
 import React, { createContext, useContext, useState, type ReactNode, useCallback, useEffect } from 'react';
-import { findUserById, type NotionUser } from '@/lib/notion';
+import type { User } from '@/lib/user'; // Updated import
 import { useToast } from '@/hooks/use-toast';
 
 interface AuthContextType {
-  currentUser: NotionUser | null;
+  currentUser: User | null;
   isLoading: boolean;
   error: string | null;
-  loginWithNotionId: (pageId: string) => Promise<void>;
+  loginWithUsername: (username: string) => Promise<void>; // Renamed and signature changed
   logout: () => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-const NOTION_USER_ID_KEY = 'contentFlowNotionUserId';
+const LOGGED_IN_USERNAME_KEY = 'contentFlowLoggedInUsername'; // Key for local storage
 
 export function AuthProviderWrapper({ children }: { children: ReactNode }) {
-  const [currentUser, setCurrentUser] = useState<NotionUser | null>(null);
-  const [isLoading, setIsLoading] = useState(true); // Start loading true to check local storage
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
 
@@ -28,34 +28,41 @@ export function AuthProviderWrapper({ children }: { children: ReactNode }) {
     setError(null);
     setIsLoading(false);
     if (typeof window !== 'undefined') {
-      localStorage.removeItem(NOTION_USER_ID_KEY);
+      localStorage.removeItem(LOGGED_IN_USERNAME_KEY);
     }
     toast({ title: "Logged Out", description: "You have been successfully logged out." });
   }, [toast]);
 
-  const loginWithNotionId = useCallback(async (pageId: string) => {
-    if (!pageId.trim()) {
-        setError("Notion User ID cannot be empty.");
-        toast({ title: "Login Failed", description: "Notion User ID cannot be empty.", variant: "destructive" });
+  const loginWithUsername = useCallback(async (username: string) => {
+    if (!username.trim()) {
+        setError("Username cannot be empty.");
+        toast({ title: "Login Failed", description: "Username cannot be empty.", variant: "destructive" });
         return;
     }
     setIsLoading(true);
     setError(null);
     try {
-      const user = await findUserById(pageId.trim());
-      if (user) {
-        setCurrentUser(user);
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username: username.trim() }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setCurrentUser(data as User);
         if (typeof window !== 'undefined') {
-          localStorage.setItem(NOTION_USER_ID_KEY, user.id);
+          localStorage.setItem(LOGGED_IN_USERNAME_KEY, (data as User).username);
         }
-        toast({ title: "Login Successful", description: `Welcome back, ${user.name || 'User'}!` });
+        toast({ title: "Login Successful", description: `Welcome back, ${data.name || data.username}!` });
       } else {
-        setError("User not found with the provided Notion ID, or the ID is invalid.");
+        setError(data.error || "User not found or invalid credentials.");
         setCurrentUser(null);
         if (typeof window !== 'undefined') {
-          localStorage.removeItem(NOTION_USER_ID_KEY);
+          localStorage.removeItem(LOGGED_IN_USERNAME_KEY);
         }
-        toast({ title: "Login Failed", description: "User not found or ID is invalid.", variant: "destructive" });
+        toast({ title: "Login Failed", description: data.error || "User not found or invalid credentials.", variant: "destructive" });
       }
     } catch (err) {
       console.error("Login error:", err);
@@ -63,27 +70,30 @@ export function AuthProviderWrapper({ children }: { children: ReactNode }) {
       setError(errorMessage);
       setCurrentUser(null);
       if (typeof window !== 'undefined') {
-        localStorage.removeItem(NOTION_USER_ID_KEY);
+        localStorage.removeItem(LOGGED_IN_USERNAME_KEY);
       }
-      toast({ title: "Login Error", description: errorMessage, variant: "destructive" });
+      toast({ title: "Login Error", description: "Could not connect to login service.", variant: "destructive" });
     } finally {
       setIsLoading(false);
     }
   }, [toast]);
 
   useEffect(() => {
-    // Check local storage for persisted user ID on initial load
-    const persistedUserId = typeof window !== 'undefined' ? localStorage.getItem(NOTION_USER_ID_KEY) : null;
-    if (persistedUserId) {
-      loginWithNotionId(persistedUserId);
+    // Check local storage for persisted username on initial load
+    const persistedUsername = typeof window !== 'undefined' ? localStorage.getItem(LOGGED_IN_USERNAME_KEY) : null;
+    if (persistedUsername) {
+      // Attempt to "re-login" to fetch fresh user data if necessary, or simply set state
+      // For this example, we'll re-call loginWithUsername to ensure data consistency
+      // and handle cases where user details might have changed server-side.
+      loginWithUsername(persistedUsername);
     } else {
       setIsLoading(false); // No persisted user, stop loading
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); // loginWithNotionId is stable due to useCallback
+  }, []); // loginWithUsername is stable due to useCallback
 
   return (
-    <AuthContext.Provider value={{ currentUser, isLoading, error, loginWithNotionId, logout }}>
+    <AuthContext.Provider value={{ currentUser, isLoading, error, loginWithUsername, logout }}>
       {children}
     </AuthContext.Provider>
   );
