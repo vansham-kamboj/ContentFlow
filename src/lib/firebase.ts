@@ -13,17 +13,52 @@ const firebaseConfig = {
   measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
 };
 
-let app: FirebaseApp;
-let db: Firestore;
-let auth: Auth;
+let app: FirebaseApp | null = null;
+let db: Firestore | null = null;
+let authInstance: Auth | null = null;
 
-if (getApps().length === 0) {
-  app = initializeApp(firebaseConfig);
+const requiredEnvVars: (keyof typeof firebaseConfig)[] = [
+  'apiKey',
+  'authDomain',
+  'projectId',
+  'appId', // appId is also crucial for initialization
+];
+
+const missingEnvVars = requiredEnvVars.filter(key => !firebaseConfig[key]);
+
+if (missingEnvVars.length > 0) {
+  console.error(
+    `Firebase Initialization Error: The following required environment variables are missing or empty in your .env file: ${missingEnvVars.join(', ')}.`
+  );
+  console.error(
+    'Please ensure your .env file is correctly populated with variables prefixed with NEXT_PUBLIC_ (e.g., NEXT_PUBLIC_FIREBASE_API_KEY) and that you have restarted your development server.'
+  );
 } else {
-  app = getApps()[0];
+  if (getApps().length === 0) {
+    try {
+      app = initializeApp(firebaseConfig);
+    } catch (error) {
+      console.error("Firebase Initialization Error: Failed to initialize Firebase app.", error);
+      // If initializeApp itself throws, app will remain null.
+    }
+  } else {
+    app = getApps()[0];
+  }
+
+  if (app) {
+    try {
+      db = getFirestore(app);
+      authInstance = getAuth(app); // Renamed to authInstance to avoid conflict with export name
+    } catch (error) {
+      console.error("Firebase Initialization Error: Failed to initialize Firestore or Auth services.", error);
+      // This is where auth/invalid-api-key would typically be caught if app initialized but config was bad
+      db = null;
+      authInstance = null;
+    }
+  } else {
+    console.error("Firebase Initialization Error: Firebase app object is not available. Firestore and Auth services cannot be initialized.");
+  }
 }
 
-db = getFirestore(app);
-auth = getAuth(app);
-
-export { app, db, auth };
+// Export them, potentially as null if initialization failed
+export { app, db, authInstance as auth };
