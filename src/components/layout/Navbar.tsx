@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import { Menu, Rocket, ChevronDown, LayoutGrid } from 'lucide-react';
+import { Menu, Rocket, ChevronDown } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import {
   DropdownMenu,
@@ -13,11 +13,9 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { UserProfileMenu } from '@/components/auth/UserProfileMenu';
 
 const mainNavLinks = [
   { href: '/', label: 'Home' },
-  { href: '/feed', label: 'Public Feed', icon: LayoutGrid },
 ];
 
 const toolLinks = [
@@ -46,7 +44,6 @@ export function Navbar() {
               pathname === link.href ? "text-accent font-semibold" : "text-muted-foreground"
             )}>
               <Link href={link.href} >
-                {link.icon && <link.icon className="mr-2 h-4 w-4" />}
                 {link.label}
               </Link>
             </Button>
@@ -81,7 +78,7 @@ export function Navbar() {
         </nav>
 
         <div className="hidden md:flex items-center ml-auto">
-          <UserProfileMenu />
+          {/* UserProfileMenu removed here */}
         </div>
 
 
@@ -111,7 +108,6 @@ export function Navbar() {
                        pathname === link.href ? "text-accent font-semibold" : "text-foreground"
                     )}
                   >
-                    {link.icon && <link.icon className="mr-2 h-5 w-5" />}
                     {link.label}
                   </Link>
                 ))}
@@ -134,7 +130,7 @@ export function Navbar() {
                 </div>
               </nav>
               <div className="mt-auto pt-6 border-t border-border">
-                <UserProfileMenu />
+                {/* UserProfileMenu removed here */}
               </div>
             </SheetContent>
           </Sheet>

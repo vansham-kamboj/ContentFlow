@@ -1,7 +1,6 @@
 
 import { initializeApp, getApps, type FirebaseApp } from 'firebase/app';
 import { getFirestore, type Firestore } from 'firebase/firestore';
-import { getAuth, type Auth } from 'firebase/auth';
 
 // Log the raw environment variables as seen by this module
 console.log("--- Firebase Environment Variable Check (src/lib/firebase.ts) ---");
@@ -26,42 +25,26 @@ const firebaseConfig = {
 
 let app: FirebaseApp | null = null;
 let db: Firestore | null = null;
-let authInstance: Auth | null = null;
 
-// These keys are essential for Firebase to initialize core services, especially auth.
+// These keys are essential for Firebase to initialize core services.
 const requiredEnvVars: (keyof typeof firebaseConfig)[] = [
   'apiKey',
   'authDomain',
   'projectId',
-  'appId', // App ID is crucial for Firebase services
+  'appId',
 ];
 
 const missingEnvVars = requiredEnvVars.filter(key => {
   const value = firebaseConfig[key];
-  return !value || value.trim() === ''; // Check for undefined, null, or empty string
+  return !value || value.trim() === '';
 });
 
 if (missingEnvVars.length > 0) {
   console.error(
-    `Firebase Initialization Error: The following required environment variables are missing or effectively empty: ${missingEnvVars.join(', ')}.`
+    `Firebase Initialization Error: The following required environment variables are missing or empty in your .env file: ${missingEnvVars.join(', ')}.`
   );
   console.error(
-    'This means that when the application tried to read these values (e.g., `process.env.NEXT_PUBLIC_FIREBASE_API_KEY`), they were undefined or an empty string.'
-  );
-  console.error(
-    'CRITICAL: Please ensure all of the following are true:'
-  );
-  console.error(
-    '1. You have a file named exactly `.env` in the ROOT directory of your project (same level as `package.json`).'
-  );
-  console.error(
-    '2. The `.env` file contains the correct variable names (e.g., `NEXT_PUBLIC_FIREBASE_API_KEY=yourActualValue`) AND your actual, valid Firebase project credentials.'
-  );
-  console.error(
-    '3. You have completely STOPPED and then RESTARTED your Next.js development server (e.g., `npm run dev`) AFTER saving any changes to the `.env` file. This is essential for Next.js to load the variables.'
-  );
-  console.error(
-    '4. There are no typos in your variable names or values in the .env file.'
+    'Please ensure your .env file is correctly populated with variables prefixed with NEXT_PUBLIC_ (e.g., NEXT_PUBLIC_FIREBASE_API_KEY) and that you have restarted your development server.'
   );
 } else {
   if (getApps().length === 0) {
@@ -70,7 +53,6 @@ if (missingEnvVars.length > 0) {
       console.log("Firebase app initialized successfully.");
     } catch (error) {
       console.error("Firebase Initialization Error: Failed to initialize Firebase app object.", error);
-      // If initializeApp itself throws, app will remain null.
     }
   } else {
     app = getApps()[0];
@@ -80,20 +62,14 @@ if (missingEnvVars.length > 0) {
   if (app) {
     try {
       db = getFirestore(app);
-      authInstance = getAuth(app); // This is where auth/invalid-api-key often occurs if keys are bad
-      console.log("Firestore and Auth services obtained.");
+      console.log("Firestore service obtained.");
     } catch (error) {
-      console.error("Firebase Initialization Error: Failed to initialize Firestore or Auth services.", error);
-      // This is where auth/invalid-api-key would typically be caught if app initialized but config was bad
+      console.error("Firebase Initialization Error: Failed to initialize Firestore service.", error);
       db = null;
-      authInstance = null;
     }
-  } else if (missingEnvVars.length === 0) { 
-    // This case should ideally not be reached if missingEnvVars is empty,
-    // as initializeApp should succeed or throw.
+  } else if (missingEnvVars.length === 0) {
     console.error("Firebase Initialization Error: Firebase app object is not available, but all required env vars were reported as present. This indicates an unexpected issue during initializeApp.");
   }
 }
 
-// Export them, potentially as null if initialization failed
-export { app, db, authInstance as auth };
+export { app, db };

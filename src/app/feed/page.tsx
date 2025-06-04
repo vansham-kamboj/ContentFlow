@@ -3,10 +3,10 @@
 
 import { PageWrapper } from '@/components/layout/PageWrapper';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button'; // Added for potential future use
-import Link from 'next/link'; // Added for potential future use
+// import { Button } from '@/components/ui/button'; // Removed for now
+// import Link from 'next/link'; // Removed for now
 
-// Placeholder data for the feed items - replace with actual data fetching
+// Placeholder data for the feed items - replace with actual data fetching later
 const placeholderFeedItems = Array.from({ length: 12 }).map((_, i) => ({
   id: `item-${i}`,
   linkUrl: `https://example.com/post/${i}`,
@@ -49,18 +49,14 @@ function FeedItemCard({ item }: { item: FeedItem }) {
 
 
 export default function FeedPage() {
-  // In the future, you would fetch posts from Firestore here
+  // In the future, you might fetch posts from Firestore here
   // For now, we'll use placeholder data
 
   return (
     <PageWrapper title="Public Feed" description="See what everyone is sharing!">
       <div className="mb-8 text-center">
-        {/* Placeholder for a "Share a Post" button if the user is logged in */}
-        {/* <Button asChild>
-          <Link href="/share-post">Share Your Post</Link>
-        </Button> */}
         <p className="text-muted-foreground mt-2">
-          This is a basic feed. Functionality to share your own posts will be added soon!
+          This is a basic feed. Functionality to share posts will be added in future updates!
         </p>
       </div>
       
