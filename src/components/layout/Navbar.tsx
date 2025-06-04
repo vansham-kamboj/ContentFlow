@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import { Menu, Rocket, ChevronDown } from 'lucide-react';
+import { Menu, Rocket, ChevronDown, Wand2 } from 'lucide-react'; // Added Wand2
 import { cn } from '@/lib/utils';
 import {
   DropdownMenu,
@@ -13,17 +13,18 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { UserProfileMenu } from '@/components/auth/UserProfileMenu'; // Added import
+import { UserProfileMenu } from '@/components/auth/UserProfileMenu';
 
 const mainNavLinks = [
   { href: '/', label: 'Home' },
-  { href: '/feed', label: 'Public Feed' }, // Link to the public feed
+  { href: '/feed', label: 'Public Feed' },
 ];
 
 const toolLinks = [
-  { href: '/reel', label: 'Reel Planner' },
-  { href: '/story', label: 'Story Prompts' },
-  { href: '/linkedin', label: 'LinkedIn Posts' },
+  { href: '/reel', label: 'Reel Planner', icon: undefined },
+  { href: '/story', label: 'Story Prompts', icon: undefined },
+  { href: '/linkedin', label: 'LinkedIn Posts', icon: undefined },
+  { href: '/hook-generator', label: 'Hook Generator', icon: Wand2 }, // Added Hook Generator
 ];
 
 export function Navbar() {
@@ -67,10 +68,11 @@ export function Navbar() {
                   <Link
                     href={link.href}
                     className={cn(
-                      "w-full",
+                      "w-full flex items-center", // Added flex items-center
                       pathname === link.href ? "text-accent font-semibold" : ""
                     )}
                   >
+                    {link.icon && <link.icon className="mr-2 h-4 w-4" /> }
                     {link.label}
                   </Link>
                 </DropdownMenuItem>
@@ -80,14 +82,14 @@ export function Navbar() {
         </nav>
 
         <div className="hidden md:flex items-center ml-auto">
-          <UserProfileMenu /> {/* Added UserProfileMenu */}
+          <UserProfileMenu />
         </div>
 
 
         {/* Mobile Navigation */}
-        <div className="md:hidden ml-auto flex items-center"> {/* Added flex and items-center */}
-          <div className="mr-2"> {/* Added margin for spacing */}
-            <UserProfileMenu /> {/* Added UserProfileMenu for mobile */}
+        <div className="md:hidden ml-auto flex items-center">
+          <div className="mr-2">
+            <UserProfileMenu />
           </div>
           <Sheet>
             <SheetTrigger asChild>
@@ -124,17 +126,17 @@ export function Navbar() {
                         key={link.href}
                         href={link.href}
                         className={cn(
-                          "text-lg transition-colors hover:text-accent",
+                          "text-lg transition-colors hover:text-accent flex items-center", // Added flex items-center
                           pathname === link.href ? "text-accent font-semibold" : "text-foreground"
                         )}
                       >
+                        {link.icon && <link.icon className="mr-2 h-5 w-5" /> }
                         {link.label}
                       </Link>
                     ))}
                   </div>
                 </div>
               </nav>
-              {/* UserProfileMenu removed from sheet footer as it's now in the header for mobile */}
             </SheetContent>
           </Sheet>
         </div>
