@@ -23,7 +23,7 @@ const mainNavLinks = [
 
 const toolLinks = [
   { href: '/reel', label: 'Reel Planner', icon: undefined },
-  { href: '/story', label: 'Story Prompts', icon: undefined },
+  { href: '/', label: 'Story Prompts', icon: undefined },
   { href: '/linkedin', label: 'LinkedIn Posts', icon: undefined },
   { href: '/hook-generator', label: 'Hook Generator', icon: Wand2 },
 ];
