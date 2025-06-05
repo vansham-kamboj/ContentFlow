@@ -333,12 +333,12 @@ With ShareSpace, you’ve got a crew — people who get the grind, the overthink
           </p>
           <div className="flex flex-col sm:flex-row justify-center items-center gap-4 mb-10">
             <Button asChild size="lg" className="bg-blue-600 hover:bg-blue-700 text-primary-foreground px-8 py-5 text-lg shadow-lg transform hover:scale-105 transition-transform duration-300">
-              <Link href="YOUR_INSTAGRAM_COMMUNITY_LINK" target="_blank" rel="noopener noreferrer">
+              <Link href="https://www.instagram.com/techies_comm/" target="_blank" rel="noopener noreferrer">
                 <Instagram className="h-5 w-5 mr-2" /> Catch us on Instagram
               </Link>
             </Button>
             <Button asChild size="lg" className="bg-green-600 hover:bg-green-700 text-primary-foreground px-8 py-5 text-lg shadow-lg transform hover:scale-105 transition-transform duration-300">
-              <Link href="YOUR_WHATSAPP_COMMUNITY_LINK" target="_blank" rel="noopener noreferrer">
+              <Link href="https://chat.whatsapp.com/ESI9d1MyJ6NE1Pa3YHQ7GR" target="_blank" rel="noopener noreferrer">
                 <MessageCircle className="h-5 w-5 mr-2" /> Hop into the WhatsApp gang
               </Link>
             </Button>
