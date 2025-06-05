@@ -31,6 +31,8 @@ const nextConfig: NextConfig = {
         net: false, // For packages expecting Node.js network APIs
         tls: false, // For packages expecting Node.js TLS/SSL APIs
         dns: false, // For packages expecting Node.js DNS APIs (e.g., @grpc/grpc-js)
+        http:false,
+        https:false,
       };
     }
     return config;

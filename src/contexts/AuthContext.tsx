@@ -1,48 +1,56 @@
-
 'use client';
 
-import React, { createContext, useContext, type ReactNode } from 'react';
-import type { User } from '@/lib/user'; // Keep User type for potential future use if needed elsewhere
+import React, { createContext, useContext, useState } from 'react';
+
+interface User {
+  id: number;
+  name: string;
+  email: string;
+}
 
 interface AuthContextType {
-  currentUser: User | null;
-  isLoading: boolean;
-  error: string | null;
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  loginWithUsername: (username: string) => Promise<void>;
+  user: User | null;
+  login: (email: string, password: string) => Promise<boolean>;
   logout: () => void;
 }
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+const AuthContext = createContext<AuthContextType | null>(null);
 
-export function AuthProviderWrapper({ children }: { children: ReactNode }) {
-  // No user state, login is removed
-  const currentUser = null;
-  const isLoading = false;
-  const error = null;
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (!context) throw new Error('useAuth must be used within AuthProvider');
+  return context;
+};
 
-  const loginWithUsername = async (username: string): Promise<void> => {
-    // No-op: Login functionality removed
-    console.warn("Login functionality has been removed. Call to loginWithUsername for user:", username, "ignored.");
-    return Promise.resolve();
+export const AuthProviderWrapper = ({ children }: { children: React.ReactNode }) => {
+  const [user, setUser] = useState<User | null>(null);
+
+  const login = async (email: string, password: string) => {
+    try {
+      const res = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        setUser(data.user);
+        return true;
+      } else {
+        return false;
+      }
+    } catch (err) {
+      console.error('Login error:', err);
+      return false;
+    }
   };
 
-  const logout = (): void => {
-    // No-op: Logout functionality removed
-    console.warn("Logout functionality has been removed. Call to logout ignored.");
-  };
+  const logout = () => setUser(null);
 
   return (
-    <AuthContext.Provider value={{ currentUser, isLoading, error, loginWithUsername, logout }}>
+    <AuthContext.Provider value={{ user, login, logout }}>
       {children}
     </AuthContext.Provider>
   );
-}
-
-export function useAuth(): AuthContextType {
-  const context = useContext(AuthContext);
-  if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProviderWrapper');
-  }
-  return context;
-}
+};

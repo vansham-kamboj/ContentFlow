@@ -1,5 +1,4 @@
-
-import type {Config} from 'tailwindcss';
+import type { Config } from 'tailwindcss';
 
 export default {
   darkMode: ['class'],
@@ -72,26 +71,36 @@ export default {
         md: 'calc(var(--radius) - 2px)',
         sm: 'calc(var(--radius) - 4px)',
       },
+      boxShadow: {
+        'gradient-glow':
+          '0 0 10px rgba(128,0,255,0.3), 0 0 20px rgba(144, 0, 255, 0.3), 0 0 30px rgba(128,0,255,0.2)',
+      },
       keyframes: {
         'accordion-down': {
-          from: {
-            height: '0',
-          },
-          to: {
-            height: 'var(--radix-accordion-content-height)',
-          },
+          from: { height: '0' },
+          to: { height: 'var(--radix-accordion-content-height)' },
         },
         'accordion-up': {
-          from: {
-            height: 'var(--radix-accordion-content-height)',
-          },
-          to: {
-            height: '0',
-          },
+          from: { height: 'var(--radix-accordion-content-height)' },
+          to: { height: '0' },
         },
         'scroll-left': {
           '0%': { transform: 'translateX(0)' },
-          '100%': { transform: 'translateX(-50%)' }, // Moves one full set of items if content is duplicated
+          '100%': { transform: 'translateX(-50%)' },
+        },
+        'pulse-glow': {
+          '0%': {
+            boxShadow:
+              '0 0 10px rgba(128,0,255,0.3), 0 0 20px rgba(0,0,255,0.3), 0 0 30px rgba(128,0,255,0.2)',
+          },
+          '50%': {
+            boxShadow:
+              '0 0 15px rgba(128,0,255,0.5), 0 0 25px rgba(0,0,255,0.5), 0 0 35px rgba(128,0,255,0.4)',
+          },
+          '100%': {
+            boxShadow:
+              '0 0 10px rgba(128,0,255,0.3), 0 0 20px rgba(0,0,255,0.3), 0 0 30px rgba(128,0,255,0.2)',
+          },
         },
       },
       animation: {
@@ -100,6 +109,7 @@ export default {
         'scroll-left-slow': 'scroll-left 60s linear infinite',
         'scroll-left-medium': 'scroll-left 40s linear infinite',
         'scroll-left-fast': 'scroll-left 25s linear infinite',
+        'pulse-glow': 'pulse-glow 1.5s ease-in-out infinite',
       },
     },
   },

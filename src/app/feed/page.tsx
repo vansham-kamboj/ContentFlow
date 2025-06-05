@@ -1,132 +1,64 @@
-
 'use client';
 
 import React from 'react';
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
-import Image from 'next/image';
-
-// Expanded placeholder data for the feed items
-const placeholderFeedItems = Array.from({ length: 20 }).map((_, i) => ({
-  id: `item-${i}`,
-  linkUrl: `https://example.com/post/${i}`,
-  platform: ['YouTube', 'Instagram', 'LinkedIn', 'TikTok', 'X.com'][i % 5],
-  userName: `User ${i + 1}`,
-  userAvatar: `https://placehold.co/40x40.png?text=U${i+1}`,
-  imageUrl: `https://placehold.co/300x169.png?text=Post+${i+1}`, // 16:9 aspect ratio
-  imageHint: ['travel', 'food', 'tech', 'nature', 'art'][i % 5],
-  postCaption: `This is a captivating post (#${i + 1}) exploring new horizons and exciting ideas. Join the conversation! #socialmedia #content #explore`,
-}));
-
-interface FeedItem {
-  id: string;
-  linkUrl: string;
-  platform: string;
-  userName: string;
-  userAvatar: string;
-  imageUrl: string;
-  imageHint?: string;
-  postCaption: string;
-}
-
-function FeedItemCard({ item }: { item: FeedItem }) {
-  return (
-    <Card className="w-72 shrink-0 m-2 bg-card text-card-foreground border-border shadow-md hover:shadow-lg transition-shadow duration-300">
-      <CardHeader className="p-3">
-        <div className="flex items-center gap-2">
-          <img src={item.userAvatar} alt={item.userName} className="h-8 w-8 rounded-full border" data-ai-hint="user avatar"/>
-          <div>
-            <p className="text-sm font-medium truncate" title={item.userName}>{item.userName}</p>
-            <p className="text-xs text-muted-foreground">On {item.platform}</p>
-          </div>
-        </div>
-      </CardHeader>
-      <CardContent className="p-3 pt-0">
-        <div className="aspect-video mb-2 w-full overflow-hidden rounded-md">
-          <Image
-            src={item.imageUrl}
-            alt="Post image"
-            width={268} 
-            height={151} 
-            className="object-cover w-full h-full"
-            data-ai-hint={item.imageHint || "social media content"}
-          />
-        </div>
-        <p className="text-xs break-words line-clamp-3 mb-2 h-12 leading-tight">{item.postCaption}</p>
-        <a
-          href={item.linkUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-xs text-accent hover:underline truncate block mt-1"
-        >
-          View Post &rarr;
-        </a>
-      </CardContent>
-    </Card>
-  );
-}
-
-interface FeedRowProps {
-  items: FeedItem[];
-  animationClass: string;
-  ariaLabel: string;
-}
-
-function FeedRow({ items, animationClass, ariaLabel }: FeedRowProps) {
-  if (!items || items.length === 0) {
-    return null;
-  }
-  // Duplicate items for seamless looping
-  const displayItems = [...items, ...items];
-
-  return (
-    <div className="w-full overflow-hidden py-2 group" role="marquee" aria-label={ariaLabel}>
-      <div className={`flex whitespace-nowrap ${animationClass} group-hover:pause-animation`}>
-        {displayItems.map((item, index) => (
-          <FeedItemCard key={`${item.id}-${index}`} item={item} />
-        ))}
-      </div>
-    </div>
-  );
-}
+import { FaInstagram, FaWhatsapp } from 'react-icons/fa';
 
 export default function FeedPage() {
-  const row1Items = placeholderFeedItems.slice(0, 7);
-  const row2Items = placeholderFeedItems.slice(7, 13);
-  const row3Items = placeholderFeedItems.slice(13, 20);
-
   return (
-    <>
-      {/* Header section, constrained and centered */}
-      <div className="container mx-auto px-4 pt-8">
-        <header className="mb-8 text-center">
-          <h1 className="font-headline text-4xl font-bold mb-2 text-primary-foreground">Public Feed</h1>
-          <p className="text-lg text-muted-foreground">See what everyone is sharing in our dynamic feed!</p>
-        </header>
-        <div className="text-center">
-          <p className="text-muted-foreground mt-2">
-            Hover over a row to pause the animation.
-          </p>
-        </div>
-      </div>
+    <div className="container mx-auto px-4 pt-20 max-w-3xl">
+      {/* ShareSpace Hero Section */}
+      <section className="text-center mb-12">
+        <h1 className="font-headline text-4xl font-bold mb-4 text-primary-foreground">
+          ShareSpace is Coming Soon!
+        </h1>
+        <p className="text-muted-foreground text-lg mb-4">
+          A dedicated space to share your content directly on our website — be it your ideas, resources, or your proudest moments.
+        </p>
+        <p className="text-muted-foreground text-base mb-4">
+          Everything you post becomes part of a public feed reaching creators across the platform.
+        </p>
+        <p className="text-muted-foreground text-base mb-4">
+          Think of it as your digital bulletin board — for visibility, for growth, and for connection.
+        </p>
+        <p className="text-muted-foreground text-base font-medium">
+          💡 Got ideas for ShareSpace? We're building it with <b>you</b>, and for <b>you</b>.
+        </p>
+      </section>
 
-      {/* Full-width feed section with edge fade */}
-      <div className="relative w-full overflow-x-hidden py-8 feed-fade-edges">
-        <div className="flex flex-col gap-2">
-          <FeedRow items={row1Items} animationClass="animate-scroll-left-slow" ariaLabel="Featured posts, slow scroll"/>
-          <FeedRow items={row2Items} animationClass="animate-scroll-left-medium" ariaLabel="Trending content, medium scroll"/>
-          <FeedRow items={row3Items} animationClass="animate-scroll-left-fast" ariaLabel="Latest shares, fast scroll"/>
-        </div>
-      </div>
+      {/* Techies Community CTA Section */}
+      <section className="bg-card p-6 rounded-xl shadow-lg text-center border border-border">
+        <h2 className="text-2xl font-bold mb-3 text-primary-foreground">Join Our Community – <span className="text-purple-500">Techies</span></h2>
+        <p className="text-muted-foreground mb-4">
+          Be part of a growing community of creators. Share your journey, your work, and your voice by tagging us on Instagram or WhatsApp.
+        </p>
+        <p className="text-muted-foreground mb-4">
+          If you've ever thought of starting content creation — now’s your chance. Use our tools, and we’ll be with you throughout the journey. 🎯
+        </p>
+        <p className="text-muted-foreground mb-6">
+          We're also planning exclusive sessions & events to help you grow. Let’s build and rise together!
+        </p>
 
-       {placeholderFeedItems.length === 0 && (
-        <div className="container mx-auto px-4 pb-8">
-          <Card className="col-span-full">
-            <CardContent className="p-10 text-center">
-              <p className="text-muted-foreground">No posts shared yet. Content will appear here!</p>
-            </CardContent>
-          </Card>
+        <div className="flex justify-center gap-6 mt-4">
+          <a
+            href="https://www.instagram.com/your_insta_handle"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-2 bg-gradient-to-r from-purple-500 to-blue-500 text-white px-5 py-2 rounded-full shadow hover:scale-105 transition-transform"
+          >
+            <FaInstagram className="text-xl" />
+            Join on Instagram
+          </a>
+          <a
+            href="https://chat.whatsapp.com/your_community_link"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-2 bg-green-500 text-white px-5 py-2 rounded-full shadow hover:scale-105 transition-transform"
+          >
+            <FaWhatsapp className="text-xl" />
+            Join on WhatsApp
+          </a>
         </div>
-      )}
-    </>
+      </section>
+    </div>
   );
 }
