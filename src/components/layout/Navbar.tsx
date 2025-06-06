@@ -1,10 +1,11 @@
+
 'use client';
 
 import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import { Menu, Rocket, ChevronDown, Wand2 } from 'lucide-react';
+import { Menu, Rocket, ChevronDown, Wand2, MessageSquare, CalendarDays } from 'lucide-react'; // Added CalendarDays
 import { cn } from '@/lib/utils';
 import {
   DropdownMenu,
@@ -13,35 +14,29 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { UserProfileMenu } from '@/components/auth/UserProfileMenu';
-import { useAuth } from '@/contexts/AuthContext';
 
 const mainNavLinks = [
   { href: '/', label: 'Home' },
-  { href: '/feed', label: 'ShareSpace' },
-  { href: '/feedback', label: 'Honest take' },
+  { href: '/feed', label: 'Public Feed' },
+  { href: '/calendar', label: 'Calendar', icon: CalendarDays }, // Added Calendar Link
 ];
 
 const toolLinks = [
   { href: '/reel', label: 'Reel Planner', icon: undefined },
-  { href: '/', label: 'Story Prompts', icon: undefined },
+  { href: '/tweet-generator', label: 'X Tweet Generator', icon: undefined },
   { href: '/linkedin', label: 'LinkedIn Posts', icon: undefined },
-  { href: '/hook-generator', label: 'Hook Generator', icon: Wand2 },
+  { href: '/hook-generator', label: 'Hook Generator', icon: undefined },
 ];
 
 export function Navbar() {
   const pathname = usePathname();
-  const router = useRouter();
   const isToolLinkActive = toolLinks.some(link => pathname === link.href);
-  const { user, logout } = useAuth();
+  const isMainLinkActive = (href: string) => pathname === href;
 
-  const handleLogout = () => {
-    logout();
-    router.push('/login');
-  };
 
   return (
-    <header className="sticky top-4 z-50 w-full">
-      <div className="w-[80%] mx-auto rounded-full bg-background/95 border border-border/40 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-6 flex h-16 max-w-screen-2xl items-center shadow-md">
+    <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <div className="container px-6 flex h-16 max-w-screen-2xl items-center">
         <Link href="/" className="flex items-center space-x-2 text-primary-foreground mr-6">
           <Rocket className="h-7 w-7 text-accent" />
           <span className="font-bold text-xl font-headline">ContentFlow</span>
@@ -52,9 +47,10 @@ export function Navbar() {
           {mainNavLinks.map((link) => (
             <Button key={link.href} variant="ghost" asChild className={cn(
               "transition-colors hover:text-accent hover:bg-transparent px-3",
-              pathname === link.href ? "text-accent font-semibold" : "text-muted-foreground"
+              isMainLinkActive(link.href) ? "text-accent font-semibold" : "text-muted-foreground"
             )}>
-              <Link href={link.href}>
+              <Link href={link.href} >
+                {link.icon && <link.icon className="mr-2 h-4 w-4" />}
                 {link.label}
               </Link>
             </Button>
@@ -76,11 +72,10 @@ export function Navbar() {
                   <Link
                     href={link.href}
                     className={cn(
-                      "w-full flex items-center",
+                      "w-full flex items-center", 
                       pathname === link.href ? "text-accent font-semibold" : "text-card-foreground"
                     )}
                   >
-                    {link.icon && <link.icon className="mr-2 h-4 w-4" />}
                     {link.label}
                   </Link>
                 </DropdownMenuItem>
@@ -89,10 +84,15 @@ export function Navbar() {
           </DropdownMenu>
         </nav>
 
-
+        <div className="hidden md:flex items-center ml-auto">
+          <UserProfileMenu />
+        </div>
 
         {/* Mobile Navigation */}
         <div className="md:hidden ml-auto flex items-center">
+           <div className="mr-4">
+            <UserProfileMenu />
+          </div>
           <Sheet>
             <SheetTrigger asChild>
               <Button variant="ghost" size="icon">
@@ -102,9 +102,9 @@ export function Navbar() {
             </SheetTrigger>
             <SheetContent side="right" className="w-[280px] bg-background text-foreground p-6 flex flex-col">
               <div className="mb-8">
-                <Link href="/" className="flex items-center space-x-2">
-                  <Rocket className="h-7 w-7 text-accent" />
-                  <span className="font-bold text-xl font-headline">ContentFlow</span>
+                 <Link href="/" className="flex items-center space-x-2">
+                    <Rocket className="h-7 w-7 text-accent" />
+                    <span className="font-bold text-xl font-headline">ContentFlow</span>
                 </Link>
               </div>
               <nav className="flex flex-col space-y-4 flex-grow">
@@ -114,9 +114,10 @@ export function Navbar() {
                     href={link.href}
                     className={cn(
                       "text-lg transition-colors hover:text-accent flex items-center",
-                      pathname === link.href ? "text-accent font-semibold" : "text-foreground"
+                       pathname === link.href ? "text-accent font-semibold" : "text-foreground"
                     )}
                   >
+                     {link.icon && <link.icon className="mr-2 h-5 w-5" /> }
                     {link.label}
                   </Link>
                 ))}
@@ -124,15 +125,15 @@ export function Navbar() {
                   <p className="text-lg text-muted-foreground mb-2 mt-2">Explore tools</p>
                   <div className="flex flex-col space-y-3 pl-4">
                     {toolLinks.map((link) => (
-                      <Link
+                       <Link
                         key={link.href}
                         href={link.href}
                         className={cn(
-                          "text-lg transition-colors hover:text-accent flex items-center",
+                          "text-lg transition-colors hover:text-accent flex items-center", 
                           pathname === link.href ? "text-accent font-semibold" : "text-foreground"
                         )}
                       >
-                        {link.icon && <link.icon className="mr-2 h-5 w-5" />}
+                        {link.icon && <link.icon className="mr-2 h-5 w-5" /> }
                         {link.label}
                       </Link>
                     ))}
