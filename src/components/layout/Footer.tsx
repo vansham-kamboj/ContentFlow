@@ -31,7 +31,7 @@ export function Footer() {
         </div>
 
         <p className="text-xs">
-          &copy; {new Date().getFullYear()} © 2025 ContentFlow.Powered by creators.
+          &copy; {new Date().getFullYear()} ContentFlow.Powered by creators.
         </p>
       </div>
     </footer>
