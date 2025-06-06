@@ -18,7 +18,7 @@ import { UserProfileMenu } from '@/components/auth/UserProfileMenu';
 const mainNavLinks = [
   { href: '/', label: 'Home' },
   { href: '/feed', label: 'Public Feed' },
-  { href: '/calendar', label: 'Calendar', icon: CalendarDays }, // Added Calendar Link
+  { href: '/feedback', label: 'Your Take?'}, // Added Calendar Link
 ];
 
 const toolLinks = [
