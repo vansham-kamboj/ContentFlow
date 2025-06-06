@@ -131,7 +131,7 @@ export default function NewHomePage() {
             Hey, content creator?
           </h1>
           <h1 className="font-headline text-4xl md:text-6xl font-bold mb-6 text-primary-foreground">
-            Or thinking  <span className="text-accent">about it?</span>.
+            Or thinking  <span className="text-accent">about it</span>?
           </h1>
           <p className="text-lg md:text-xl mb-6 max-w-3xl mx-auto text-muted-foreground">
             That’s literally why this exists.<br></br>
