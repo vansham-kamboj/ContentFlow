@@ -134,11 +134,11 @@ export default function NewHomePage() {
             Or thinking  <span className="text-accent">about it?</span>.
           </h1>
           <p className="text-lg md:text-xl mb-6 max-w-3xl mx-auto text-muted-foreground">
-            Same. That’s literally why this exists.<br></br>
+            That’s literally why this exists.<br></br>
             No burnout. No “what to post?” freakouts. Just reels, stories, LinkedIn — all sorted.
           </p>
                 <p className="text-lg md:text-xl mb-10 max-w-3xl mx-auto text-muted-foreground">
-        <strong>Welcome to ShareSpace</strong> — Welcome to ShareSpace — your spot for messy ideas, wild projects, and late-night thoughts that actually slap.<br />
+        <strong>Welcome to ShareSpace</strong> — your spot for messy ideas, wild projects, and late-night thoughts that actually slap.<br />
         <strong>Techies Community</strong> - Bro... it’s a vibe.<br></br>
 founders, devs, designers, and chill creators all building and growing together.
       </p>
