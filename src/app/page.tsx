@@ -369,7 +369,7 @@ With ShareSpace, you’ve got a crew — people who get the grind, the overthink
       </section>
       
       <section>
-          <div className="min-h-screen bg-white text-gray-900 py-16 px-6 lg:px-24">
+          <div className="text-gray-900 py-16 px-6 lg:px-24">
       <div className="max-w-5xl mx-auto text-center">
         <h1 className="text-4xl font-bold mb-4">Yo! I’m Vansham 👋</h1>
         <p className="text-lg text-gray-600 mb-10">
