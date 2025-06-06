@@ -10,6 +10,15 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import Image from 'next/image';
 import React from 'react';
 
+function Card({ icon, title, desc }: { icon: React.ReactNode; title: string; desc: string }) {
+  return (
+    <div className="bg-gray-100 rounded-lg p-6 text-center hover:shadow-lg transition duration-200">
+      <div className="mb-4 text-purple-600">{icon}</div>
+      <h3 className="font-semibold text-xl mb-2">{title}</h3>
+      <p className="text-gray-600">{desc}</p>
+    </div>
+  );
+}
 const growthStats = [
   { icon: BarChart3, text: "Post like a beast — 5x more consistent", color: "text-green-400" },
   { icon: Clock3, text: "Create stuff 3x quicker — no burnout, just flow", color: "text-blue-400" },
@@ -366,6 +375,46 @@ With ShareSpace, you’ve got a crew — people who get the grind, the overthink
             <Link href="/reel">Start my hustle!</Link>
           </Button>
         </div>
+      </section>
+      <section>
+          <div className="min-h-screen bg-white text-gray-900 py-16 px-6 lg:px-24">
+      <div className="max-w-5xl mx-auto text-center">
+        <h1 className="text-4xl font-bold mb-4">Yo! I’m Vansham 👋</h1>
+        <p className="text-lg text-gray-600 mb-10">
+          Just your friendly neighborhood <span className="font-semibold text-black">dev</span>, <span className="font-semibold text-black">content dude</span>, and <span className="font-semibold text-black">community guy</span> who’s all about turning crazy ideas into real stuff.
+          Big fan of <span className="font-semibold text-black">startups, scaling, and vibes-based marketing</span>. 
+        </p>
+        <p className="text-sm text-gray-400 italic">Stick around till the end of the site if you wanna really know me 😉</p>
+      </div>
+
+      <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3 max-w-5xl mx-auto mt-12">
+        <Card
+          icon={<Code size={32} />}
+          title="Code Warrior 💻"
+          desc="Shipping sleek UIs and backend magic. If it breaks, we debug together 😤"
+        />
+        <Card
+          icon={<Sparkles size={32} />}
+          title="Content Machine ✨"
+          desc="Reels, memes, carousels — whatever gets the message across (and hits the algo)."
+        />
+        <Card
+          icon={<Users size={32} />}
+          title="Community Vibes 🤝"
+          desc="Bringing people together with chill sessions, mad collabs, and no cringe."
+        />
+        <Card
+          icon={<Rocket size={32} />}
+          title="Startup Sprinter 🚀"
+          desc="Helping early-stage dreams become funding-stage rockets (with strategy)."
+        />
+        <Card
+          icon={<BarChart3 size={32} />}
+          title="Marketing Plug 📊"
+          desc="Mixing creativity with numbers to make the growth graph go 📈"
+        />
+      </div>
+    </div>
       </section>
 
     </>
