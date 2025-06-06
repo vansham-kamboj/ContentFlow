@@ -124,7 +124,7 @@ export default function NewHomePage() {
   return (
     <>
       {/* Hero Section */}
-      <section className="relative py-40 md:py-32 -mt-16 text-center overflow-hidden bg-gradient-to-br from-background to-slate-900/50">
+      <section className="subtle-grid-background relative py-40 md:py-32 -mt-16 text-center overflow-hidden bg-gradient-to-br from-background to-slate-900/50">
         <div className="container mx-auto px-4 relative z-10">
           <Zap className="mx-auto h-16 w-16 text-accent mb-6 animate-pulse" />
           <h1 className="font-headline text-4xl md:text-6xl font-bold mb-4 text-primary-foreground">
