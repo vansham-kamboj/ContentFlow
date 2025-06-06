@@ -134,4 +134,19 @@ body {
     right: 0;
     background: linear-gradient(to left, hsl(var(--background)) 25%, transparent 100%);
   }
+
+  .subtle-grid-background {
+    --grid-line-color: rgba(255, 255, 255, 0.03); /* Default for dark theme */
+    --grid-line-size: 1px;
+    --grid-spacing: 40px;
+
+    background-image:
+      linear-gradient(to right, var(--grid-line-color) var(--grid-line-size), transparent var(--grid-line-size)),
+      linear-gradient(to bottom, var(--grid-line-color) var(--grid-line-size), transparent var(--grid-line-size));
+    background-size: var(--grid-spacing) var(--grid-spacing);
+  }
+
+  .light .subtle-grid-background {
+    --grid-line-color: rgba(0, 0, 0, 0.03); /* Color for light theme */
+  }
 }
