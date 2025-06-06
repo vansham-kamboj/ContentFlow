@@ -368,18 +368,17 @@ With ShareSpace, you’ve got a crew — people who get the grind, the overthink
         </div>
       </section>
       
-      <section>
-          <div className="text-gray-900 py-16 px-6 lg:px-24">
+  <section>
+    <div className="text-gray-900 py-16 px-6 lg:px-24">
       <div className="max-w-5xl mx-auto text-center">
-        <h1 className="text-4xl font-bold mb-4">Yo! I’m Vansham 👋</h1>
-        <p className="text-lg text-gray-600 mb-10">
-          Just your friendly neighborhood <span className="font-semibold text-black">dev</span>, <span className="font-semibold text-black">content dude</span>, and <span className="font-semibold text-black">community guy</span> who’s all about turning crazy ideas into real stuff.
-          Big fan of <span className="font-semibold text-black">startups, scaling, and vibes-based marketing</span>. 
+        <h1 className="font-headline text-3xl md:text-5xl font-bold mb-6 text-primary-foreground">Yo! I’m Vansham 👋</h1>
+        <p className="text-lg text-muted-foreground mb-10">
+          Just your friendly neighborhood <span className="font-semibold text-whiete">dev</span>, <span className="font-semibold text-white">content dude</span>, and <span className="font-semibold text-white">community guy</span> who’s all about turning crazy ideas into real stuff.
+          Big fan of <span className="font-semibold text-white">startups, scaling, and vibes-based marketing</span>. 
         </p>
-        <p className="text-sm text-gray-400 italic">Stick around till the end of the site if you wanna really know me 😉</p>
       </div>
     </div>
-      </section>
+  </section>
 
     </>
   );
