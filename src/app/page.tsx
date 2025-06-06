@@ -153,7 +153,7 @@ founders, devs, designers, and chill creators all building and growing together.
           <div className="mt-16 relative z-10">
             {/* !!! IMPORTANT: Replace with actual UI screenshot of your app's main interface !!! */}
             <Image
-              src="/images/app_hero_mockup.png" // Example path, create this image!
+              src="/images/image.jpg" // Example path, create this image!
               alt="ContentFlow app interface showing content generation"
               width={800}
               height={450}
