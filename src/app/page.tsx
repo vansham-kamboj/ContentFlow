@@ -286,7 +286,7 @@ founders, devs, designers, and chill creators all building and growing together.
       </section>
 
       {/* Testimonials Section */}
-      <section id="testimonials" className="py-16 md:py-24 bg-gradient-to-br from-background to-slate-900/50">
+{/*       <section id="testimonials" className="py-16 md:py-24 bg-gradient-to-br from-background to-slate-900/50">
         <div className="container mx-auto px-4 text-center">
           <Quote className="mx-auto h-14 w-14 text-accent mb-6" />
           <h2 className="font-headline text-3xl md:text-4xl font-bold mb-12 text-primary-foreground">
@@ -314,7 +314,7 @@ founders, devs, designers, and chill creators all building and growing together.
             ))}
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* UPDATED: ShareSpace Community Section */}
       <section id="sharespace" className="py-20 md:py-28 bg-background/60">
