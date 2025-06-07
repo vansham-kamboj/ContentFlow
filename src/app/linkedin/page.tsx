@@ -6,10 +6,10 @@ import { PageWrapper } from '@/components/layout/PageWrapper';
 import { LinkedInPostForm, type LinkedInPostFormValues } from '@/components/linkedin/LinkedInPostForm';
 import { LinkedInPostDisplay } from '@/components/linkedin/LinkedInPostDisplay';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import type { LinkedInPostData } from '@/lib/types';
+import type { LinkedInPostData } from '@/lib/types'; // Assuming this is defined for output display
 import { generateLinkedInPost, type GenerateLinkedInPostInput } from '@/ai/flows/generate-linkedin-post';
 import { useToast } from '@/hooks/use-toast';
-import { AlertCircle } from 'lucide-react';
+import { AlertCircle, Loader2 } from 'lucide-react'; // Added Loader2
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 export default function LinkedInPage() {
@@ -23,17 +23,22 @@ export default function LinkedInPage() {
     setIsLoading(true);
     setError(null);
     setPostData(null);
-    setCurrentTopic(data.topic);
+    setCurrentTopic(data.topic); 
     try {
-      // The voiceTone is now correctly determined in LinkedInPostForm and passed in data
+      // Ensure data passed to the flow matches GenerateLinkedInPostInput
       const input: GenerateLinkedInPostInput = {
         theme: data.theme,
         topic: data.topic,
+        postDetails: data.postDetails, // Pass the new field
         includeTrendingInsight: data.includeTrendingInsight,
-        voiceTone: data.voiceTone, // Use the voiceTone from the form data
+        voiceTone: data.voiceTone, 
       };
       const result = await generateLinkedInPost(input);
       setPostData(result);
+      toast({
+        title: "LinkedIn Post Generated!",
+        description: "Your AI-crafted post is ready for review.",
+      });
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : "An unknown error occurred.";
       setError(`Failed to generate LinkedIn post. ${errorMessage}`);
@@ -53,11 +58,19 @@ export default function LinkedInPage() {
         <CardHeader>
           <CardTitle className="font-headline text-3xl">Create Your Next LinkedIn Post</CardTitle>
           <CardDescription>
-            Select a theme, provide a topic, choose your voice, and let AI help you generate compelling content.
+            Select a theme, provide a topic and your detailed content idea, choose your voice, and let AI help you generate compelling content.
           </CardDescription>
         </CardHeader>
         <CardContent>
           <LinkedInPostForm onSubmit={handleFormSubmit} isLoading={isLoading} />
+          
+          {isLoading && !postData && ( // Show loader only when loading and no data yet
+            <div className="flex items-center justify-center h-40 mt-8">
+              <Loader2 className="h-12 w-12 animate-spin text-accent" />
+              <p className="ml-4 text-lg text-foreground">Generating your LinkedIn post...</p>
+            </div>
+          )}
+
           {error && (
             <Alert variant="destructive" className="mt-8">
               <AlertCircle className="h-4 w-4" />
