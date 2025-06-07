@@ -321,7 +321,7 @@ export default function NewGenZHomePage() {
                 <PlayCircle className="mr-2" /> Try the Tool
               </Link>
             </Button>
-            <Button size="lg" variant="outline" className="border-primary text-primary hover:bg-primary/10" onClick={() => window.location.href = 'mailto:feedback@example.com?subject=ContentFlow Feedback'}>
+            <Button size="lg" variant="outline" className="border-primary text-primary hover:bg-primary/10 hover:text-white" onClick={() => window.location.href = 'mailto:feedback@example.com?subject=ContentFlow Feedback'}>
                 <Mail className="mr-2" /> Give Feedback
             </Button>
           </div>
