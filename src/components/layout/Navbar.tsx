@@ -19,7 +19,8 @@ const mainNavLinks = [
   { href: '/', label: 'Home' },
   { href: '/about', label: 'About Us', icon: undefined },
   { href: '/feed', label: 'ShareSpace' },
-  { href: '/feedback', label: 'Your Take?'}, // Added Calendar Link
+  { href: '/feedback', label: 'Your Take?'},
+  { href: '/content-research', label: 'Content Research', icon: undefined },
 ];
 
 const toolLinks = [
