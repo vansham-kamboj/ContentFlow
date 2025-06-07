@@ -20,10 +20,10 @@ const mainNavLinks = [
   { href: '/about', label: 'About Us', icon: undefined },
   { href: '/feed', label: 'ShareSpace' },
   { href: '/feedback', label: 'Your Take?'},
-  { href: '/content-research', label: 'Content Research', icon: undefined },
 ];
 
 const toolLinks = [
+  { href: '/content-research', label: 'Content Research', icon: undefined },
   { href: '/reel', label: 'Reel Planner', icon: undefined },
   { href: '/tweet-generator', label: 'X Tweet Generator', icon: undefined },
   { href: '/linkedin', label: 'LinkedIn Posts', icon: undefined },
