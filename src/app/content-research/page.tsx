@@ -103,7 +103,7 @@ export default function ContentResearchPage() {
   return (
     <PageWrapper title="Content Market Fit Analyzer" description="Get AI-powered insights into your content ideas, niche, and audience.">
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <Card className="lg:col-span-1 shadow-xl bg-card text-card-foreground border-border h-fit sticky top-24">
+        <Card className="lg:col-span-1 shadow-xl bg-card text-card-foreground border-border h-fit lg:sticky lg:top-24">
           <CardHeader>
             <CardTitle className="font-headline text-2xl flex items-center">
               <FileSearch className="mr-2 h-6 w-6 text-accent" />
