@@ -69,7 +69,7 @@ export function Navbar() {
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-56 bg-card border-border" align="start">
               {toolLinks.map((link) => (
-                <DropdownMenuItem key={link.href} asChild className="cursor-pointer hover:bg-muted focus:bg-muted">
+                <DropdownMenuItem key={link.href} asChild className="cursor-pointer hover:bg-muted hover:text-white focus:bg-muted">
                   <Link
                     href={link.href}
                     className={cn(
