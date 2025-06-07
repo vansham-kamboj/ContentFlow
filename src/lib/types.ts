@@ -3,6 +3,11 @@ import { z } from 'zod';
 import type { GenerateReelScriptOutput } from '@/ai/flows/generate-reel-script';
 import type { ContentFormatHookEnum, HookStyleEnum } from '@/ai/flows/generate-hooks';
 
+// Re-import the base schema type, but we won't use the schema object for extension here.
+// We only need the type for ensuring the transformation is correct.
+// import { type ContentMarketFitResearchInput as BaseContentMarketFitResearchInput } from '@/ai/flows/content-market-fit-research';
+
+
 export interface ContentType {
   id: string;
   title: string;
@@ -135,3 +140,127 @@ export interface DailyTweetsUIData { // For UI state, matches AI output structur
   day: string;
   tweets: string[];
 }
+
+// Schema for the Content Research Page Form - Defined independently
+export const ResearchPageFormSchema = z.object({
+  topicOrNiche: z
+    .string()
+    .min(10, { message: 'Topic or niche must be at least 10 characters.' })
+    .max(300, { message: 'Topic or niche must be 300 characters or less.' })
+    .describe('The primary topic, niche, or industry for the content (e.g., "Sustainable slow fashion for young professionals", "AI tools for indie game developers").'),
+  targetAudience: z
+    .string()
+    .min(10, { message: 'Target audience description must be at least 10 characters.' })
+    .max(300, { message: 'Target audience description must be 300 characters or less.' })
+    .describe('Describe the primary target audience (e.g., "Gen Z interested in ethical consumption", "Solo game developers on a budget").'),
+  contentIdea: z
+    .string()
+    .max(500, { message: 'Content idea must be 500 characters or less.' })
+    .optional()
+    .describe('A specific content idea or series concept (e.g., "Weekly YouTube series reviewing thrift store finds", "Podcast interviewing AI startup founders").'),
+  platformFocus: z
+    .string()
+    .max(100, { message: 'Platform focus must be 100 characters or less.' })
+    .optional()
+    .describe('Optional: Specific platforms to focus on (e.g., "YouTube, TikTok", "Substack newsletter").'),
+  desiredOutcome: z
+    .string()
+    .max(200, {message: 'Desired outcome must be 200 characters or less.'})
+    .optional()
+    .describe('Optional: What the creator hopes to achieve (e.g., "Build a community", "Generate affiliate income", "Establish thought leadership").'),
+  selectedPredefinedTone: z.string().optional().describe("Predefined tone for the AI report's presentation style."),
+  customVoiceTone: z.string().max(100, {message: "Custom tone description must be 100 characters or less."}).optional().describe("Custom tone description if 'Custom...' is selected for the report's presentation style."),
+});
+
+export type ResearchPageFormValues = z.infer<typeof ResearchPageFormSchema>;
+
+
+// Schemas for Content Market Fit Research AI Flow
+export const ContentMarketFitResearchInputSchema = z.object({
+  topicOrNiche: z
+    .string()
+    .min(10, { message: 'Topic or niche must be at least 10 characters.' })
+    .max(300, { message: 'Topic or niche must be 300 characters or less.' })
+    .describe('The primary topic, niche, or industry for the content (e.g., "Sustainable slow fashion for young professionals", "AI tools for indie game developers").'),
+  targetAudience: z
+    .string()
+    .min(10, { message: 'Target audience description must be at least 10 characters.' })
+    .max(300, { message: 'Target audience description must be 300 characters or less.' })
+    .describe('Describe the primary target audience (e.g., "Gen Z interested in ethical consumption", "Solo game developers on a budget").'),
+  contentIdea: z
+    .string()
+    .max(500, { message: 'Content idea must be 500 characters or less.' })
+    .optional()
+    .describe('A specific content idea or series concept (e.g., "Weekly YouTube series reviewing thrift store finds", "Podcast interviewing AI startup founders").'),
+  platformFocus: z
+    .string()
+    .max(100, { message: 'Platform focus must be 100 characters or less.' })
+    .optional()
+    .describe('Optional: Specific platforms to focus on (e.g., "YouTube, TikTok", "Substack newsletter").'),
+  desiredOutcome: z
+    .string()
+    .max(200, {message: 'Desired outcome must be 200 characters or less.'})
+    .optional()
+    .describe('Optional: What the creator hopes to achieve (e.g., "Build a community", "Generate affiliate income", "Establish thought leadership").'),
+  voiceTone: z
+    .string()
+    .optional()
+    .describe(
+      'The desired voice and tone for the AI analysis itself (e.g., "Very professional", "Fun and witty", "Encouraging and supportive"). This influences how the research report is presented.'
+    ),
+});
+export type ContentMarketFitResearchInput = z.infer<typeof ContentMarketFitResearchInputSchema>;
+
+const GrowthPotentialSchema = z.object({
+  rating: z.enum(["High", "Medium", "Low", "Emerging", "Saturated"]).describe("Qualitative rating of growth potential (e.g., High, Medium, Emerging)."),
+  analysis: z.string().describe("Detailed explanation of the growth potential rating, including market trends, competition, and opportunities."),
+});
+
+const AudienceAnalysisSchema = z.object({
+  painPoints: z.array(z.string()).describe("Key problems, challenges, or unmet needs of the target audience."),
+  interests: z.array(z.string()).describe("Primary interests, hobbies, and desires of the target audience relevant to the niche."),
+  engagementStrategies: z.array(z.string()).describe("Actionable strategies to engage this audience effectively."),
+});
+
+const ContentStrategySuggestionsSchema = z.object({
+  formats: z.array(z.string()).describe("Recommended content formats (e.g., 'Short-form video tutorials', 'In-depth blog posts', 'Interactive quizzes')."),
+  angles: z.array(z.string()).describe("Unique content angles or perspectives to stand out."),
+  seoKeywords: z.array(z.string()).describe("A list of 5-10 relevant SEO keywords or keyphrases for discoverability."),
+  pillars: z.array(z.string()).optional().describe("Suggested core content pillars or themes (3-5).")
+});
+
+const MonetizationOpportunitiesSchema = z.object({
+  primarySources: z.array(z.string()).describe("Most viable primary income streams (e.g., 'Affiliate marketing for relevant tools', 'Sponsorships from ethical brands')."),
+  secondarySources: z.array(z.string()).describe("Potential secondary income streams (e.g., 'Selling digital templates', 'Community memberships')."),
+  incomeEstimateRationale: z.string().describe("A qualitative discussion on income potential. Avoid specific monetary figures. Focus on factors influencing earning potential like audience size, engagement, and chosen methods."),
+});
+
+const PlatformSpecificInsightSchema = z.object({
+    platform: z.string().describe("The social media or content platform (e.g., YouTube, TikTok, Instagram, Blog, Newsletter)."),
+    growthTips: z.array(z.string()).describe("Actionable growth tips specific to this platform for the given niche."),
+    contentRecommendations: z.array(z.string()).describe("Content types or series ideas that perform well on this platform for the niche."),
+});
+
+const RiskAssessmentSchema = z.object({
+    potentialChallenges: z.array(z.string()).describe("Potential difficulties or obstacles the creator might face."),
+    mitigationStrategies: z.array(z.string()).describe("Suggestions on how to overcome or reduce these challenges."),
+});
+
+const OverallFitScoreSchema = z.object({
+    score: z.enum(["Strong Fit", "Good Fit", "Moderate Fit", "Needs Refinement", "Challenging Fit"]).describe("The AI's overall qualitative assessment of the content/niche fit."),
+    summary: z.string().describe("A concise justification for the fit score, highlighting key strengths and weaknesses."),
+    nextSteps: z.array(z.string()).describe("Actionable recommendations or next steps for the creator based on the analysis."),
+});
+
+
+export const ContentMarketFitResearchOutputSchema = z.object({
+  marketOverview: z.string().describe("A general description of the market/niche, its current state, and key players or trends."),
+  growthPotential: GrowthPotentialSchema,
+  audienceAnalysis: AudienceAnalysisSchema,
+  contentStrategySuggestions: ContentStrategySuggestionsSchema,
+  monetizationOpportunities: MonetizationOpportunitiesSchema,
+  platformSpecificInsights: z.array(PlatformSpecificInsightSchema).optional().describe("Insights for specific platforms, if platformFocus was provided by the user. Provide insights for each platform listed by the user, or omit/empty array if none listed."),
+  riskAssessment: RiskAssessmentSchema,
+  overallFitScore: OverallFitScoreSchema,
+});
+export type ContentMarketFitResearchOutput = z.infer<typeof ContentMarketFitResearchOutputSchema>;
