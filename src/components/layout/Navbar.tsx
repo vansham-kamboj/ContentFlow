@@ -63,7 +63,7 @@ export function Navbar() {
                 "transition-colors hover:text-accent hover:bg-transparent px-3 outline-none",
                 isToolLinkActive ? "text-accent font-semibold" : "text-muted-foreground"
               )}>
-                Other AI Tools
+                Explore Tools
                 <ChevronDown className="relative top-[1px] ml-1 h-4 w-4 transition duration-200 group-data-[state=open]:rotate-180" />
               </Button>
             </DropdownMenuTrigger>
