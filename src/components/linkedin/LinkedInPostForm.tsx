@@ -1,55 +1,52 @@
 
 'use client';
 
-import React, { useState } from 'react'; // Added useState
-import { useForm, Controller } from 'react-hook-form';
+import React from 'react';
+import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label'; // Ensure Label is imported
+import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import type { LinkedInTheme } from '@/lib/types';
 import { Loader2, Wand2 } from 'lucide-react';
+import { PREDEFINED_VOICE_TONES_COMMON } from '@/lib/types';
 
 const themes: LinkedInTheme[] = ['Milestone', 'Advice', 'Behind-the-Scenes', 'Personal Growth'];
 
-const PREDEFINED_VOICE_TONES_LINKEDIN = [ // Renamed to avoid potential conflicts if imported elsewhere
-  "Friendly & Casual",
-  "Professional & Clean",
-  "Fun & Witty",
-  "Motivational & Bold",
-  "Sarcastic & Edgy",
-  "Storytelling / Narrative",
-  "Crisp & Direct",
-  "Informative but Simple",
-  "Custom...",
-];
-
-
 const formSchema = z.object({
   theme: z.enum(themes, { required_error: "Please select a theme." }),
-  topic: z.string().min(5, { message: "Topic must be at least 5 characters long." }).max(100, { message: "Topic must be 100 characters or less." }),
+  topic: z
+    .string()
+    .min(1, { message: "Topic cannot be empty."})
+    .max(100, { message: "Topic must be 100 characters or less." }),
+  postDetails: z
+    .string()
+    .min(10, { message: "Please provide some details for your post (at least 10 characters)." })
+    .max(1500, { message: "Post details must be 1500 characters or less." }),
   includeTrendingInsight: z.boolean().default(false),
-  selectedPredefinedTone: z.string().optional(), // For the Select component
-  customVoiceTone: z.string().optional(), // For the custom Input field
+  selectedPredefinedTone: z.string().optional(),
+  customVoiceTone: z.string().optional(),
 });
 
-export type LinkedInPostFormValues = z.infer<typeof formSchema> & { voiceTone?: string }; // Add voiceTone to the final output type
+// This type includes the dynamically added voiceTone for submission
+export type LinkedInPostFormValues = z.infer<typeof formSchema> & { voiceTone?: string }; 
 
 interface LinkedInPostFormProps {
-  onSubmit: (data: LinkedInPostFormValues) => void;
+  onSubmit: (data: LinkedInPostFormValues) => void; // Uses the extended type
   isLoading: boolean;
 }
 
 export function LinkedInPostForm({ onSubmit, isLoading }: LinkedInPostFormProps) {
-  const form = useForm<LinkedInPostFormValues>({
+  const form = useForm<z.infer<typeof formSchema>>({ // form uses the base schema type
     resolver: zodResolver(formSchema),
     defaultValues: {
       theme: undefined, 
       topic: '',
+      postDetails: '',
       includeTrendingInsight: false,
       selectedPredefinedTone: '',
       customVoiceTone: '',
@@ -58,7 +55,7 @@ export function LinkedInPostForm({ onSubmit, isLoading }: LinkedInPostFormProps)
 
   const selectedTone = form.watch("selectedPredefinedTone");
 
-  const handleFormSubmit = (data: LinkedInPostFormValues) => {
+  const handleFormSubmit = (data: z.infer<typeof formSchema>) => {
     let finalVoiceTone: string | undefined = undefined;
     if (data.selectedPredefinedTone === "Custom...") {
       finalVoiceTone = data.customVoiceTone?.trim() || undefined;
@@ -78,7 +75,7 @@ export function LinkedInPostForm({ onSubmit, isLoading }: LinkedInPostFormProps)
           render={({ field }) => (
             <FormItem>
               <FormLabel>Post Theme</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value} value={field.value}>
+              <Select onValueChange={field.onChange} value={field.value || ''}>
                 <FormControl>
                   <SelectTrigger>
                     <SelectValue placeholder="Select a theme for your post" />
@@ -105,12 +102,12 @@ export function LinkedInPostForm({ onSubmit, isLoading }: LinkedInPostFormProps)
           name="topic"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Topic</FormLabel>
+              <FormLabel>Topic (Max 100 Characters)</FormLabel>
               <FormControl>
-                <Input placeholder="E.g., Launching a new product, Lessons from a recent project" {...field} />
+                <Input placeholder="E.g., New Product Launch, Key Project Learnings" {...field} />
               </FormControl>
               <FormDescription>
-                What specific subject do you want to post about?
+                A concise headline or context for your post.
               </FormDescription>
               <FormMessage />
             </FormItem>
@@ -119,48 +116,72 @@ export function LinkedInPostForm({ onSubmit, isLoading }: LinkedInPostFormProps)
 
         <FormField
           control={form.control}
-          name="selectedPredefinedTone"
+          name="postDetails"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Preferred Voice & Tone</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value} value={field.value}>
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select a tone (or 'Custom...')" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  {PREDEFINED_VOICE_TONES_LINKEDIN.map((tone) => (
-                    <SelectItem key={tone} value={tone}>{tone}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <FormLabel>Tell about your post (Your Story/Idea/Key Points)</FormLabel>
+              <FormControl>
+                <Textarea 
+                  placeholder="Share the details, story, or key points you want your post to cover. The AI will use this as the main content." 
+                  className="min-h-[150px]" 
+                  {...field} 
+                />
+              </FormControl>
               <FormDescription>
-                Choose the desired tone for your post, or select "Custom..." to define your own.
+                This is where you provide the core information for your post. Be as detailed as you like (up to 1500 characters).
               </FormDescription>
               <FormMessage />
             </FormItem>
           )}
         />
-
-        {selectedTone === "Custom..." && (
-          <FormField
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <FormField
             control={form.control}
-            name="customVoiceTone"
+            name="selectedPredefinedTone"
             render={({ field }) => (
-              <FormItem>
-                <FormLabel>Custom Voice & Tone</FormLabel>
-                <FormControl>
-                  <Input placeholder="Describe your custom tone (e.g., 'Scholarly yet approachable')" {...field} />
-                </FormControl>
+                <FormItem>
+                <FormLabel>Preferred Voice & Tone</FormLabel>
+                <Select onValueChange={field.onChange} value={field.value || ''}>
+                    <FormControl>
+                    <SelectTrigger>
+                        <SelectValue placeholder="Select a tone (or 'Custom...')" />
+                    </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                    {PREDEFINED_VOICE_TONES_COMMON.map((tone) => (
+                        <SelectItem key={tone} value={tone}>{tone}</SelectItem>
+                    ))}
+                    </SelectContent>
+                </Select>
                 <FormDescription>
-                  If you selected "Custom...", type your desired voice and tone here.
+                    Choose or define a tone for the post.
                 </FormDescription>
                 <FormMessage />
-              </FormItem>
+                </FormItem>
             )}
-          />
-        )}
+            />
+
+            {selectedTone === "Custom..." && (
+            <FormField
+                control={form.control}
+                name="customVoiceTone"
+                render={({ field }) => (
+                <FormItem>
+                    <FormLabel>Custom Voice & Tone</FormLabel>
+                    <FormControl>
+                    <Input placeholder="Describe your custom tone" {...field} />
+                    </FormControl>
+                    <FormDescription>
+                    E.g., 'Scholarly yet approachable'.
+                    </FormDescription>
+                    <FormMessage />
+                </FormItem>
+                )}
+            />
+            )}
+        </div>
+
 
         <FormField
           control={form.control}
@@ -178,7 +199,7 @@ export function LinkedInPostForm({ onSubmit, isLoading }: LinkedInPostFormProps)
                   Include Trending Insight
                 </FormLabel>
                 <FormDescription>
-                  Optionally, add AI-generated insights on why this topic might be trending.
+                  Optionally, add AI-generated insights on why your topic might be trending.
                 </FormDescription>
               </div>
             </FormItem>
@@ -193,3 +214,4 @@ export function LinkedInPostForm({ onSubmit, isLoading }: LinkedInPostFormProps)
     </Form>
   );
 }
+
