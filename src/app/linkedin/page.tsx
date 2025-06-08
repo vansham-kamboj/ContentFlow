@@ -6,10 +6,10 @@ import { PageWrapper } from '@/components/layout/PageWrapper';
 import { LinkedInPostForm, type LinkedInPostFormValues } from '@/components/linkedin/LinkedInPostForm';
 import { LinkedInPostDisplay } from '@/components/linkedin/LinkedInPostDisplay';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import type { LinkedInPostData } from '@/lib/types'; // Assuming this is defined for output display
+import type { LinkedInPostData } from '@/lib/types'; 
 import { generateLinkedInPost, type GenerateLinkedInPostInput } from '@/ai/flows/generate-linkedin-post';
 import { useToast } from '@/hooks/use-toast';
-import { AlertCircle, Loader2 } from 'lucide-react'; // Added Loader2
+import { AlertCircle, Loader2 } from 'lucide-react'; 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 export default function LinkedInPage() {
@@ -25,11 +25,10 @@ export default function LinkedInPage() {
     setPostData(null);
     setCurrentTopic(data.topic); 
     try {
-      // Ensure data passed to the flow matches GenerateLinkedInPostInput
       const input: GenerateLinkedInPostInput = {
         theme: data.theme,
         topic: data.topic,
-        postDetails: data.postDetails, // Pass the new field
+        postDetails: data.postDetails,
         includeTrendingInsight: data.includeTrendingInsight,
         voiceTone: data.voiceTone, 
       };
@@ -64,7 +63,7 @@ export default function LinkedInPage() {
         <CardContent>
           <LinkedInPostForm onSubmit={handleFormSubmit} isLoading={isLoading} />
           
-          {isLoading && !postData && ( // Show loader only when loading and no data yet
+          {isLoading && !postData && ( 
             <div className="flex items-center justify-center h-40 mt-8">
               <Loader2 className="h-12 w-12 animate-spin text-accent" />
               <p className="ml-4 text-lg text-foreground">Generating your LinkedIn post...</p>
