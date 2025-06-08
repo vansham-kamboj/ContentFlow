@@ -91,7 +91,7 @@ export default {
         },
         'scroll-left': {
           '0%': { transform: 'translateX(0)' },
-          '100%': { transform: 'translateX(-50%)' }, // Moves one full set of items if content is duplicated
+          '100%': { transform: 'translateX(-50%)' },
         },
       },
       animation: {
