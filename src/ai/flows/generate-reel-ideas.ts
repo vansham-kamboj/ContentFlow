@@ -1,13 +1,6 @@
 
 'use server';
 
-/**
- * @fileOverview A reel idea generation AI agent.
- *
- * - generateReelIdeas - A function that handles the reel idea generation process.
- * - GenerateReelIdeasInput - The input type for the generateReelIdeas function.
- * - GenerateReelIdeasOutput - The return type for the generateReelIdeas function.
- */
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
