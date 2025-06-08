@@ -1,11 +1,5 @@
 
 'use server';
-/**
- * @fileOverview LinkedIn post generation flow.
- *
- * This file defines a Genkit flow for generating insightful LinkedIn posts based on selected themes,
- * with optional insights on trending topics. The goal is to produce content that feels human-written and authentic.
- */
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
