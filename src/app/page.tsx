@@ -70,27 +70,6 @@ export default function NewGenZHomePage() {
       {/* Hero Section */}
       <section className="subtle-grid-background relative py-32 md:py-40 -mt-16 text-center overflow-hidden bg-background">
         <div className="container mx-auto px-4 relative z-10">
-
-          {/* Static Notification Banner */}
-          {showNotification && (
-            <div className="mb-10 p-3 rounded-lg bg-accent/10 border border-accent/30 shadow-sm max-w-2xl mx-auto relative">
-              <div className="flex items-center justify-center sm:justify-start pr-8"> {/* Added pr-8 for close button space */}
-                <Megaphone className="h-5 w-5 text-accent mr-3 shrink-0" />
-                <p className="text-sm text-accent-foreground/160">
-                  <span className="font-semibold text-accent">Latest Update:</span> Our new Content Researcher tool is now live! Get market insights instantly. 
-                </p>
-              </div>
-              <Button 
-                variant="ghost" 
-                size="icon" 
-                className="absolute top-1/2 right-2 -translate-y-1/2 h-7 w-7 text-accent-foreground/70 hover:text-accent-foreground hover:bg-accent/20"
-                onClick={() => setShowNotification(false)}
-                aria-label="Dismiss notification"
-              >
-                <X className="h-4 w-4" />
-              </Button>
-            </div>
-          )}
           
           <Zap className="mx-auto h-16 w-16 text-accent mb-6 animate-bounce" />
           <h1 className="font-headline text-4xl md:text-6xl font-bold mb-4 text-primary-foreground">
