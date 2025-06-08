@@ -20,12 +20,12 @@ import {
   HelpCircle, 
   CheckCircle2,
   TrendingUp,
-  Brain, // Added Brain
-  Lightbulb, // Added Lightbulb
-  Sparkles, // Added Sparkles
-  Award, // Added Award
-  MessageCircle as MessageCircleIcon, // Aliased MessageCircle to avoid conflict
-  Eye, // Added Eye for Vision
+  Brain, 
+  Lightbulb, 
+  Sparkles, 
+  Award, 
+  MessageCircle as MessageCircleIcon, 
+  Eye, 
 } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import Image from 'next/image';
@@ -61,7 +61,7 @@ const howItWorksSteps = [
 const platformExamples = [
   { platform: "LinkedIn", text: "posts that scream “hire me”", icon: Linkedin, color: "text-sky-400" },
   { platform: "Reels", text: "that actually get views (no more 12 likes, bro)", icon: Film, color: "text-pink-400" },
-  { platform: "X (Twitter)", text: "threads that people actually read", icon: MessageSquare, color: "text-blue-300" }, // Changed Twitter to X
+  { platform: "X (Twitter)", text: "threads that people actually read", icon: MessageSquare, color: "text-blue-300" },
 ];
 
 export default function NewGenZHomePage() {
