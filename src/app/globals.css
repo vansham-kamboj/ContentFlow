@@ -103,15 +103,13 @@ body {
       /* Bottom-right primary gradient */
       radial-gradient(circle at 85% 75%, var(--gradient-two-color) 0%, var(--gradient-transparent-bg) 50vmax);
     background-repeat: no-repeat;
-    background-attachment: fixed; /* Ensure gradients cover the whole viewport and don't scroll */
+    background-attachment: fixed; /*  gradients cover the whole viewport and don't scroll */
   }
 }
 
 @layer utilities {
   .feed-fade-edges {
     /* This class is now primarily a marker; specific styling is in feed/page.tsx or this file if preferred */
-    /* Ensure it has position: relative if pseudo-elements are positioned absolutely relative to it. */
-    /* The 'relative' class is added directly in the JSX for simplicity here. */
   }
 
   .dark .feed-fade-edges::before,
@@ -120,9 +118,9 @@ body {
     position: absolute;
     top: 0;
     bottom: 0;
-    width: 150px; /* Increased width for a softer fade */
-    z-index: 2; /* Ensures fade is above content but below other UI like navbar */
-    pointer-events: none; /* Allows clicks to pass through */
+    width: 150px;
+    z-index: 2; 
+    pointer-events: none; 
   }
 
   .dark .feed-fade-edges::before {
@@ -136,7 +134,7 @@ body {
   }
 
   .subtle-grid-background {
-    --grid-line-color: rgba(255, 255, 255, 0.03); /* Default for dark theme */
+    --grid-line-color: rgba(255, 255, 255, 0.03);
     --grid-line-size: 1px;
     --grid-spacing: 40px;
 
@@ -147,6 +145,6 @@ body {
   }
 
   .light .subtle-grid-background {
-    --grid-line-color: rgba(0, 0, 0, 0.03); /* Color for light theme */
+    --grid-line-color: rgba(0, 0, 0, 0.03);
   }
 }
