@@ -1,11 +1,6 @@
 
 'use server';
-/**
- * @fileOverview Provides AI-driven content market fit research and analysis.
- *
- * - contentMarketFitResearch - A function that analyzes a content idea or niche.
- * (Input and Output types are now imported from @/lib/types)
- */
+
 
 import {ai} from '@/ai/genkit';
 import { 
@@ -13,7 +8,7 @@ import {
   type ContentMarketFitResearchInput, 
   ContentMarketFitResearchOutputSchema,
   type ContentMarketFitResearchOutput 
-} from '@/lib/types'; // Import schemas and types
+} from '@/lib/types';
 
 export async function contentMarketFitResearch(
   input: ContentMarketFitResearchInput
