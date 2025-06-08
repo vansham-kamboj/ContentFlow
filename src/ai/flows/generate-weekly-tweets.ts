@@ -1,13 +1,5 @@
 
 'use server';
-/**
- * @fileOverview Generates a 7-day X (Twitter) content schedule with a human touch.
- *
- * - generateWeeklyTweets - A function that generates tweets for each day of the week.
- * - GenerateWeeklyTweetsInput - The input type for the generateWeeklyTweets function (imported).
- * - GenerateWeeklyTweetsOutput - The output type for the generateWeeklyTweets function (imported).
- * - TweetStrategyEnum - Enum for different content strategies (imported via schema in types.ts).
- */
 
 import {ai} from '@/ai/genkit';
 import { 
@@ -82,8 +74,7 @@ const generateWeeklyTweetsFlow = ai.defineFlow(
           if (tweets.length > input.tweetsPerDay) {
             tweets = tweets.slice(0, input.tweetsPerDay);
           } else if (tweets.length < input.tweetsPerDay) {
-            // If AI generates fewer tweets than requested, fill with placeholders
-            // This is a fallback; ideally, the prompt guides the AI to generate the correct number.
+
             const diff = input.tweetsPerDay - tweets.length;
             for (let i = 0; i < diff; i++) {
               tweets.push(`Placeholder tweet ${i + 1} for ${dayName} - AI generated too few. Please refine prompt or retry.`);
@@ -93,7 +84,7 @@ const generateWeeklyTweetsFlow = ai.defineFlow(
         });
         return { weeklySchedule: validatedSchedule };
       }
-      // Fallback if the AI output is not structured as expected
+
       console.warn("AI output for weekly tweets was not structured as expected or was incomplete. Generating placeholder schedule.");
       const placeholderSchedule = DAYS_OF_WEEK.map(day => ({
         day,
@@ -112,7 +103,6 @@ const generateWeeklyTweetsFlow = ai.defineFlow(
         );
       }
       console.error('Error in generateWeeklyTweetsFlow:', e);
-      // It's often better to throw the original error or a more specific one if possible
       throw new Error(`Failed to generate weekly tweets: ${e.message || 'Unknown error'}`);
     }
   }
