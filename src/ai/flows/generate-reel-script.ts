@@ -1,13 +1,6 @@
 
 'use server';
 
-/**
- * @fileOverview Generates a reel script, caption, and hashtags based on a reel idea.
- *
- * - generateReelScript - A function that generates the reel script, caption, and hashtags.
- * - GenerateReelScriptInput - The input type for the generateReelScript function.
- * - GenerateReelScriptOutput - The return type for the generateReelScript function.
- */
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
