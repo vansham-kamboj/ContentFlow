@@ -4,7 +4,6 @@
 import React, { useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-// Removed z import as it's not directly used here for schema definition
 import { PageWrapper } from '@/components/layout/PageWrapper';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
@@ -20,10 +19,10 @@ import { contentMarketFitResearch } from '@/ai/flows/content-market-fit-research
 import { useToast } from '@/hooks/use-toast';
 import { 
   PREDEFINED_VOICE_TONES_COMMON, 
-  ResearchPageFormSchema, // Using form-specific schema for client-side validation
+  ResearchPageFormSchema, 
   type ResearchPageFormValues,
-  type ContentMarketFitResearchInput, // AI Flow input type
-  type ContentMarketFitResearchOutput // AI Flow output type
+  type ContentMarketFitResearchInput, 
+  type ContentMarketFitResearchOutput
 } from '@/lib/types';
 
 
@@ -34,7 +33,7 @@ export default function ContentResearchPage() {
   const { toast } = useToast();
 
   const form = useForm<ResearchPageFormValues>({
-    resolver: zodResolver(ResearchPageFormSchema), // Form uses its own schema for validation
+    resolver: zodResolver(ResearchPageFormSchema),
     defaultValues: {
       topicOrNiche: '',
       targetAudience: '',
@@ -60,7 +59,7 @@ export default function ContentResearchPage() {
       finalReportVoiceTone = data.selectedPredefinedTone || undefined;
     }
 
-    // Prepare data for the AI flow, matching ContentMarketFitResearchInput type
+    // Prepare data for the AI flow
     const submissionData: ContentMarketFitResearchInput = {
       topicOrNiche: data.topicOrNiche,
       targetAudience: data.targetAudience,
