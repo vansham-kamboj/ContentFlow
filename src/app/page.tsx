@@ -1,70 +1,49 @@
 
 'use client';
 
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import {
-  Zap,
-  Wand2, 
-  CalendarDays, 
-  ThumbsUp, 
-  Film, 
-  Linkedin, 
+  Brain,
+  Zap, 
+  Lightbulb,
+  Flame,
+  Handshake,
   Users, 
-  Instagram, 
-  MessageSquare, 
-  Heart, 
-  Rocket, 
-  Mail, 
-  PlayCircle, 
-  HelpCircle, 
-  CheckCircle2,
-  TrendingUp,
-  Brain, 
-  Lightbulb, 
+  Puzzle,
+  Briefcase,
+  TrendingUp, 
   Sparkles, 
-  Award, 
-  MessageCircle as MessageCircleIcon, 
-  Eye, 
+  ListChecks, 
+  MessageCircle, 
+  Smile, 
+  PlayCircle,
+  Megaphone,
+  X,
+  Instagram,
+  Mail
 } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import Image from 'next/image';
-import React from 'react';
+import Image from 'next/image'; 
 
-const howItWorksSteps = [
-  {
-    step: 1,
-    title: "Tell Us What’s Up",
-    description: "Want to blow up? Stay active? Look like a LinkedIn CEO? Just drop your idea or goal. No need to overthink, bro. We’re not here to judge your 2am shower thoughts.",
-    icon: HelpCircle,
-    imageSrc: "/images/Step1.jpg",
-    dataAiHint: "goal setting interface",
-  },
-  {
-    step: 2,
-    title: "Get Fire Content Instantly",
-    description: "Our AI is basically that one friend who always has the best comebacks. Instant ideas, scripts, and drafts — just waiting for your personal touch. You: “Give me content.” AI: “Say less, fam.”",
-    icon: Wand2,
-    imageSrc: "/images/step2.jpg",
-    dataAiHint: "ai content generation",
-  },
-  {
-    step: 3,
-    title: "Save. Plan. Post. Repeat.",
-    description: "Pick your favs, organize your week, tweak as you like, and boom — Your content calendar is more sorted than your weekend plans. Work smart, not hard. Because why struggle when you can schedule?",
-    icon: CalendarDays,
-    imageSrc: "/images/step3.jpg",
-    dataAiHint: "content calendar planning",
-  },
-];
+export default function NewHomePageV2() {
+  const [showNotification, setShowNotification] = useState(true);
 
-const platformExamples = [
-  { platform: "LinkedIn", text: "posts that scream “hire me”", icon: Linkedin, color: "text-sky-400" },
-  { platform: "Reels", text: "that actually get views (no more 12 likes, bro)", icon: Film, color: "text-pink-400" },
-  { platform: "X (Twitter)", text: "threads that people actually read", icon: MessageSquare, color: "text-blue-300" },
-];
+  const featureList = [
+    "Reels ideas & full scripts",
+    "LinkedIn post drafts ready to tweak",
+    "Tweet suggestions for your next viral thought",
+    "One-click downloads (even for Notion 👀)"
+  ];
 
-export default function NewGenZHomePage() {
+  const whatYouGetList = [
+    "Ready-to-use tools (LinkedIn, Tweets, Reels, Research & more)",
+    "Daily ideas, auto scripts",
+    "1-click downloads (incl. Notion support)",
+    "A chill community that grows together",
+    "Meme-wala interface but pro-level results"
+  ];
   return (
     <>
       {/* Hero Section */}
