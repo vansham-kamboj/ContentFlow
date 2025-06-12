@@ -69,7 +69,6 @@ export default function NewHomePageV2() {
             <Link href="/reel">Try Our Tools - Free Beta</Link>
           </Button>
         </div>
-        </div>
       </section>
 
       {/* Section 1: You Add the Soul. We Handle the System. */}
