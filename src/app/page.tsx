@@ -93,223 +93,191 @@ export default function NewGenZHomePage() {
         </div>
       </section>
 
-      {/* Who's This For? Section */}
-<section id="whos-this-for" className="py-16 md:py-20 bg-background/60">
-  <div className="container mx-auto px-4">
-    <h2 className="font-headline text-3xl md:text-4xl font-bold text-center mb-8 text-primary-foreground">
-      Who’s This Tool For? <span className="text-accent">Everyone Chasing Growth!</span>
-    </h2>
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-      {/* Founders */}
-      <Card className="bg-card text-card-foreground shadow-lg border-border p-6 hover:border-accent hover:shadow-xl transition-all duration-300">
-        <CardHeader className="p-0 pb-4 flex flex-col items-center">
-          <Award className="w-10 h-10 mb-3 text-yellow-400" />
-          <CardTitle className="font-headline text-xl text-center">Founders</CardTitle>
-        </CardHeader>
-        <CardContent className="p-0 text-center">
-          <CardDescription className="text-base">
-            Building your personal brand while building your company?  
-            <br />
-            <span className="font-medium text-accent">Show the world your vision, leadership, and wins—without spending hours on content.</span>
-            <br />
-            <span className="text-muted-foreground text-sm">“Bro, founder ho ya future unicorn—content toh king hai!”</span>
-          </CardDescription>
-        </CardContent>
-      </Card>
-      {/* Professionals */}
-      <Card className="bg-card text-card-foreground shadow-lg border-border p-6 hover:border-accent hover:shadow-xl transition-all duration-300">
-        <CardHeader className="p-0 pb-4 flex flex-col items-center">
-          <TrendingUp className="w-10 h-10 mb-3 text-blue-400" />
-          <CardTitle className="font-headline text-xl text-center">Professionals</CardTitle>
-        </CardHeader>
-        <CardContent className="p-0 text-center">
-          <CardDescription className="text-base">
-            Want to grow your company’s presence or build a killer side hustle?  
-            <br />
-            <span className="font-medium text-accent">Get LinkedIn posts, case studies, and updates that make your team and boss go “damn!”</span>
-            <br />
-            <span className="text-muted-foreground text-sm">“Bro, work smart—not just hard.”</span>
-          </CardDescription>
-        </CardContent>
-      </Card>
-      {/* Content Creators */}
-      <Card className="bg-card text-card-foreground shadow-lg border-border p-6 hover:border-accent hover:shadow-xl transition-all duration-300">
-        <CardHeader className="p-0 pb-4 flex flex-col items-center">
-          <Sparkles className="w-10 h-10 mb-3 text-pink-400" />
-          <CardTitle className="font-headline text-xl text-center">Content Creators</CardTitle>
-        </CardHeader>
-        <CardContent className="p-0 text-center">
-          <CardDescription className="text-base">
-            Make your life easy, bro—ditch the content block and focus on your vibe.  
-            <br />
-            <span className="font-medium text-accent">Reels, stories, tweets—get them all, ready-to-go. Just add your magic touch and post.</span>
-            <br />
-            <span className="text-muted-foreground text-sm">“No more ‘what do I post?’ drama.”</span>
-          </CardDescription>
-        </CardContent>
-      </Card>
-    </div>
-  </div>
-</section>
-
-
-      {/* How It Works Section */}
-      <section id="how-it-works" className="py-16 md:py-24 bg-background/50">
-        <div className="container mx-auto px-4">
-          <h2 className="font-headline text-3xl md:text-4xl font-bold text-center mb-4 text-primary-foreground">
-            Content Creation, But Make It <span className="text-accent">Effortless</span>
+      {/* Section 1: You Add the Soul. We Handle the System. */}
+      <section className="py-16 md:py-20 bg-background/60">
+        <div className="container mx-auto px-4 text-center">
+          <Lightbulb className="mx-auto h-12 w-12 text-accent mb-6" />
+          <h2 className="font-headline text-3xl md:text-4xl font-bold mb-6 text-primary-foreground">
+            You Add the Soul. <span className="text-accent">We Handle the System.</span>
           </h2>
-          <p className="text-lg text-center text-muted-foreground mb-16 max-w-xl mx-auto">(a.k.a. How It Works)</p>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {howItWorksSteps.map((step) => (
-              <Card key={step.step} className="bg-card text-card-foreground shadow-xl border-border hover:shadow-accent/20 hover:border-accent transition-all duration-300 transform hover:-translate-y-1 flex flex-col">
-                <CardHeader>
-                  <CardTitle className="flex items-start">
-                    <span className="text-accent text-5xl font-bold mr-4">{step.step}</span>
-                    <div className="flex flex-col">
-                      <span className="font-headline text-2xl">{step.title}</span>
-                      <step.icon className="w-8 h-8 text-muted-foreground mt-1" />
-                    </div>
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="flex-grow flex flex-col">
-                  <Image
-                    src={step.imageSrc}
-                    alt={step.title}
-                    width={600}
-                    height={400}
-                    className="rounded-md mb-4 border border-border"
-                    data-ai-hint={step.dataAiHint}
-                  />
-                  <CardDescription className="text-base">{step.description}</CardDescription>
+          <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto leading-relaxed">
+            Creating content isn’t just about ideas. It’s about time, energy, and consistency.
+            We simplify that process so <strong className="text-primary-foreground">you can bring your personal touch without the pressure.</strong>
+          </p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 mb-10 max-w-4xl mx-auto">
+            {featureList.map((feature, index) => (
+              <Card key={index} className="bg-card text-card-foreground shadow-md border-border p-4 hover:border-accent transition-colors duration-300">
+                <CardContent className="p-0 flex items-center justify-center text-center h-full">
+                  <p className="text-base">{feature.startsWith("One-click") ? <span dangerouslySetInnerHTML={{ __html: feature.replace("👀", "<span class='inline-block ml-1'>👀</span>") }} /> : feature}</p>
                 </CardContent>
               </Card>
             ))}
           </div>
+          <p className="text-xl font-semibold italic text-accent">
+            “Bro tu bas feel daal, humne pehle hi reel idea likh diya hai.”
+          </p>
         </div>
       </section>
 
-      {/* Why This Tool? Section */}
-      <section id="why-this-tool" className="py-16 md:py-24 bg-background/70">
+      {/* Section 2: Everyone’s Building Something. Let’s Help Each Other Grow. */}
+      <section className="py-16 md:py-20 bg-background/50">
         <div className="container mx-auto px-4">
+          <Flame className="mx-auto h-12 w-12 text-accent mb-6" />
           <h2 className="font-headline text-3xl md:text-4xl font-bold text-center mb-12 text-primary-foreground">
-            Why <span className="text-accent">This Tool?</span>
+            Everyone’s Building Something. <span className="text-accent">Let’s Help Each Other Grow.</span>
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
-            <Card className="bg-card text-card-foreground shadow-lg border-border p-6 hover:border-accent hover:shadow-xl transition-all duration-300">
-              <CardHeader className="p-0 pb-4">
-                <CheckCircle2 className="w-10 h-10 mb-3 text-green-400" />
-                <CardTitle className="font-headline text-xl">Stop Wasting Time, Start Winning</CardTitle>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <Card className="bg-card text-card-foreground shadow-lg border-border p-6 hover:border-accent hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+              <CardHeader className="p-0 pb-4 flex flex-col items-center text-center">
+                <Briefcase className="w-10 h-10 mb-3 text-blue-400" />
+                <CardTitle className="font-headline text-xl">For Founders</CardTitle>
               </CardHeader>
-              <CardContent className="p-0">
-                <CardDescription className="text-base">
-                  Bro, nobody has time for blank screens and creative blocks.
-                  Drop your idea, get ready-to-post content, and spend your extra time… I dunno, actually living life?
-                  <br />
-                  <em className="text-accent font-medium">“Main hoon na!” — Our AI, probably.</em>
+              <CardContent className="p-0 text-center">
+                <CardDescription className="text-base mb-3">
+                  Focus on scaling your company — we’ll help build your <strong className="text-primary-foreground">startup brand</strong> and <strong className="text-primary-foreground">personal brand.</strong>
                 </CardDescription>
+                <p className="text-md font-semibold italic text-accent">"Tu unicorn banane mein lag ja, hum teri branding kar lenge."</p>
               </CardContent>
             </Card>
-
-            <Card className="bg-card text-card-foreground shadow-lg border-border p-6 hover:border-accent hover:shadow-xl transition-all duration-300">
-              <CardHeader className="p-0 pb-4">
-                <Rocket className="w-10 h-10 mb-3 text-purple-400" />
-                <CardTitle className="font-headline text-xl">For Every Platform</CardTitle>
+            <Card className="bg-card text-card-foreground shadow-lg border-border p-6 hover:border-accent hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+              <CardHeader className="p-0 pb-4 flex flex-col items-center text-center">
+                <TrendingUp className="w-10 h-10 mb-3 text-green-400" />
+                <CardTitle className="font-headline text-xl">For Professionals</CardTitle>
               </CardHeader>
-              <CardContent className="p-0 space-y-2">
-                {platformExamples.map(platform => (
-                  <div key={platform.platform} className="flex items-center">
-                    <platform.icon className={`w-5 h-5 mr-2 ${platform.color}`} /> 
-                    <span className="text-card-foreground">{platform.platform}: <span className="text-muted-foreground text-sm">{platform.text}</span></span>
-                  </div>
-                ))}
-                <CardDescription className="text-base pt-2">All ready for your personal flavor.</CardDescription>
+              <CardContent className="p-0 text-center">
+                <CardDescription className="text-base mb-3">
+                  Crack your job goals and build your online presence — with minimal effort.
+                </CardDescription>
+                <p className="text-md font-semibold italic text-accent">"Client ko PPT dikhao, post hum likhdenge."</p>
               </CardContent>
             </Card>
-            
-            <Card className="bg-card text-card-foreground shadow-lg border-border p-6 hover:border-accent hover:shadow-xl transition-all duration-300 md:col-span-2 lg:col-span-1">
-              <CardHeader className="p-0 pb-4">
-                <Users className="w-10 h-10 mb-3 text-accent" />
-                <CardTitle className="font-headline text-xl">Powered by Community</CardTitle>
+            <Card className="bg-card text-card-foreground shadow-lg border-border p-6 hover:border-accent hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+              <CardHeader className="p-0 pb-4 flex flex-col items-center text-center">
+                <Sparkles className="w-10 h-10 mb-3 text-pink-400" />
+                <CardTitle className="font-headline text-xl">For Creators</CardTitle>
               </CardHeader>
-              <CardContent className="p-0">
-                <CardDescription className="text-base mb-4">
-                  You’re not solo in this game. Join a squad of founders, creators, devs, freelancers, and designers — all hyping each other up.
-                  <br/>
-                  <em className="text-accent font-medium">“Akele mat ghuso, squad ke saath grow karo!”</em>
+              <CardContent className="p-0 text-center">
+                <CardDescription className="text-base mb-3">
+                  Your vibe matters. We’ll make sure your <strong className="text-primary-foreground">posting game stays consistent.</strong>
                 </CardDescription>
-                <div className="flex flex-col sm:flex-row justify-start items-center gap-3">
-                  <Button asChild className="bg-transparent border border-green-600 text-green-600 hover:bg-green-600 hover:text-white text-sm w-full sm:w-auto">
-                    <Link href="https://chat.whatsapp.com/ESI9d1MyJ6NE1Pa3YHQ7GR" target="_blank" rel="noopener noreferrer">
-                      <MessageSquare className="mr-2 h-4 w-4" /> WhatsApp
-                    </Link>
-                  </Button>
-                  <Button asChild className="bg-transparent border border-primary text-primary hover:bg-primary hover:text-white text-sm w-full sm:w-auto">
-                    <Link href="https://www.instagram.com/techies_comm/" target="_blank" rel="noopener noreferrer">
-                      <Instagram className="mr-2 h-4 w-4" /> Instagram
-                    </Link>
-                  </Button>
-                </div>
-                 <CardDescription className="text-xs mt-2">Real talk, daily tips, instant feedback & collabs!</CardDescription>
+                <p className="text-md font-semibold italic text-accent">"No more ‘kal se post karenge’. Aaj se flow mein aa ja."</p>
               </CardContent>
             </Card>
           </div>
         </div>
       </section>
+
+      {/* Section 3: This Isn’t Just a Tool. It’s a Tribe. */}
+      <section className="py-16 md:py-20 bg-background/60">
+        <div className="container mx-auto px-4 text-center max-w-3xl">
+          <Users className="mx-auto h-12 w-12 text-accent mb-6" />
+          <h2 className="font-headline text-3xl md:text-4xl font-bold mb-6 text-primary-foreground">
+            This Isn’t Just a Tool. <span className="text-accent">It’s a Tribe.</span>
+          </h2>
+          <p className="text-lg text-muted-foreground mb-4 leading-relaxed">
+            Let’s be real — Everyone wants to grow alone.
+            But what if we all grew <strong className="text-primary-foreground">together</strong>?
+          </p>
+          <p className="text-lg text-muted-foreground mb-8 leading-relaxed">
+            That’s what ContentFlow stands for — a <strong className="text-primary-foreground">community-first content platform</strong>.
+            Where creators support creators. Founders help founders. And no one’s left behind.
+          </p>
+          <p className="text-xl font-semibold italic text-accent">
+            “Yahan sirf content nahi banta, dosti bhi hoti hai.”
+          </p>
+        </div>
+      </section>
+
+      {/* Section 4: What You Get */}
+      <section className="py-16 md:py-20 bg-background/50">
+        <div className="container mx-auto px-4 max-w-3xl">
+          <ListChecks className="mx-auto h-12 w-12 text-accent mb-6" />
+          <h2 className="font-headline text-3xl md:text-4xl font-bold text-center mb-10 text-primary-foreground">
+            What You Get <span className="text-accent">(The Good Stuff)</span>
+          </h2>
+          <Card className="bg-card text-card-foreground shadow-xl border-border p-6 md:p-8">
+            <CardContent className="p-0">
+              <ul className="space-y-4">
+                {whatYouGetList.map((item, index) => (
+                  <li key={index} className="flex items-start text-lg">
+                    <span className="text-green-400 mr-3 mt-1">✅</span>
+                    <span className="text-muted-foreground">{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </CardContent>
+          </Card>
+          <p className="text-xl font-semibold italic text-accent text-center mt-10">
+            "Productivity bhi, personality bhi. Ab dono ek saath possible hai."
+          </p>
+        </div>
+      </section>
       
-      {/* We're With You Section */}
+      {/* Section 5: Some Meme Magic */}
+      <section className="py-16 md:py-20 bg-background/60">
+        <div className="container mx-auto px-4 max-w-2xl text-center">
+           <MessageCircle className="mx-auto h-12 w-12 text-accent mb-6" />
+          <h2 className="font-headline text-3xl md:text-4xl font-bold mb-10 text-primary-foreground">
+            Some <span className="text-accent">Meme Magic</span>
+          </h2>
+          <div className="space-y-8">
+            <Card className="bg-card text-card-foreground shadow-lg border-border p-6">
+              <CardContent className="p-0">
+                <blockquote className="text-lg italic text-muted-foreground leading-relaxed">
+                  "Mummy: Itna phone kyun chala raha hai?<br/>
+                  Main: Brand bana raha hu mummy, ContentFlow ke sath."
+                </blockquote>
+              </CardContent>
+            </Card>
+            <Card className="bg-card text-card-foreground shadow-lg border-border p-6">
+              <CardContent className="p-0">
+                <blockquote className="text-lg italic text-muted-foreground leading-relaxed">
+                  "Client: Kal 7 post chahiye<br/>
+                  Main (internally): Bhai ContentFlow hai to kya dikkat."
+                </blockquote>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </section>
+
+      {/* Last Section: Meet the Bro Behind the Flow */}
       <section className="py-16 md:py-20 bg-background/50">
         <div className="container mx-auto px-4 text-center max-w-3xl">
-          <Heart className="mx-auto h-14 w-14 text-red-400 mb-6 animate-pulse" />
-          <h2 className="font-headline text-3xl md:text-4xl font-bold mb-4 text-primary-foreground">
-            We’re With You — <span className="text-accent">Wins, Fails, and Every Awkward Reel in Between</span>
+          <Smile className="mx-auto h-12 w-12 text-accent mb-6" />
+          <h2 className="font-headline text-3xl md:text-4xl font-bold mb-6 text-primary-foreground">
+            Meet the Bro <span className="text-accent">Behind the Flow</span>
           </h2>
-          <p className="text-lg text-muted-foreground mb-6">
-            We’re not just here to celebrate your viral moments, bro.
-            We’re right there with you when your post flops, when the algorithm acts shady, and when you’re just figuring things out.
+          <p className="text-xl text-muted-foreground mb-4 leading-relaxed">
+            Hey! I’m <strong className="text-primary-foreground">Vansham</strong>, founder of ContentFlow.
           </p>
-          <p className="text-lg text-muted-foreground">
-            From “Bro, I made it!” to “Bro, what even is this?” — we’re your ride-or-die for every part of your creator journey.
-            Because real squads stick together, no matter what.
+          <p className="text-lg text-muted-foreground mb-6 leading-relaxed">
+            I love creating content, being active in communities, attending events, and most importantly — <strong className="text-primary-foreground">growing with people.</strong>
+          </p>
+          <p className="text-lg text-muted-foreground mb-8 leading-relaxed">
+            This isn’t just a product. It’s my way of saying:
+          </p>
+          <p className="text-xl font-semibold italic text-accent">
+            “Tere jaise creators deserve better tools,<br/>
+            Tera bhai bana raha hai wahi.”
           </p>
         </div>
       </section>
 
-      {/* Coming Soon: ShareSpace Section */}
-      <section id="sharespace-coming-soon" className="py-16 md:py-24 bg-background/70">
+      {/* Feedback & CTA Section (Kept from original structure) */}
+      <section className="py-20 md:py-28 bg-gradient-to-t from-background to-slate-900/60 relative">
         <div className="container mx-auto px-4 text-center max-w-3xl">
-          <Rocket className="mx-auto h-14 w-14 text-accent mb-6 transform rotate-[-45deg]" />
+          <Zap className="mx-auto h-14 w-14 text-accent mb-6" /> {/* Changed icon slightly for variety */}
           <h2 className="font-headline text-3xl md:text-4xl font-bold mb-4 text-primary-foreground">
-            <span className="text-accent">ShareSpace</span> : Coming Soon
+            Ready to Flow? <span className="text-accent">(Still in Beta, Bro!)</span>
           </h2>
           <p className="text-lg text-muted-foreground mb-6">
-            Imagine this: You make fire content with our tool, hit share, and boom — it’s live on ShareSpace.
-          </p>
-          <ul className="list-none space-y-2 text-muted-foreground mb-8 text-left sm:text-center max-w-md mx-auto">
-            <li className="flex items-center justify-center sm:justify-start"><CheckCircle2 className="text-green-400 mr-2"/>Show off your work (flex a little, you deserve it)</li>
-            <li className="flex items-center justify-center sm:justify-start"><Wand2 className="text-purple-400 mr-2"/>Get inspired by what others are dropping</li>
-            <li className="flex items-center justify-center sm:justify-start"><TrendingUp className="text-blue-400 mr-2"/>Build your rep as the content bro</li>
-          </ul>
-          <p className="text-lg text-muted-foreground">
-            It’s like your own highlight reel, but <span className="font-semibold text-primary-foreground">everyone’s invited.</span>
-          </p>
-        </div>
-      </section>
-
-      {/* Feedback & CTA Section */}
-      <section id="feedback-cta" className="subtle-grid-background py-20 md:py-28 bg-gradient-to-t from-background to-slate-900/60">
-        <div className="container mx-auto px-4 text-center max-w-3xl">
-          <ThumbsUp className="mx-auto h-14 w-14 text-accent mb-6" />
-          <h2 className="font-headline text-3xl md:text-4xl font-bold mb-4 text-primary-foreground">
-            We Want Your <span className="text-accent">Feedback!</span> (Still in Beta, Bro!)
-          </h2>
-          <p className="text-lg text-muted-foreground mb-6">
-            Your feedback = cheat code for making this tool even better. Tell us what’s working, what’s meh, and what would make your life easier. Help us help you, Jerry Maguire style.
+            Your feedback = cheat code for making this tool even better. Tell us what’s working, what’s meh, and what would make your life easier.
           </p>
           <div className="flex flex-wrap justify-center items-center gap-4">
             <Button asChild size="lg" className="bg-green-500 hover:bg-green-600 text-white">
               <Link href="https://chat.whatsapp.com/ESI9d1MyJ6NE1Pa3YHQ7GR" target="_blank" rel="noopener noreferrer">
-                <MessageSquare className="mr-2" /> Join WhatsApp
+                <MessageCircle className="mr-2" /> Join WhatsApp
               </Link>
             </Button>
             <Button asChild size="lg" className="bg-pink-500 hover:bg-pink-600 text-white">
