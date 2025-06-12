@@ -50,25 +50,25 @@ export default function NewHomePageV2() {
       <section className="subtle-grid-background relative py-32 md:py-40 -mt-16 text-center overflow-hidden bg-background">
         <div className="container mx-auto px-4 relative z-10">
           
-          <Zap className="mx-auto h-16 w-16 text-accent mb-6 animate-bounce" />
+<div> 
+            <Brain className="mx-auto h-16 w-16 text-accent mb-6 animate-bounce" />
+          </div>
           <h1 className="font-headline text-4xl md:text-6xl font-bold mb-4 text-primary-foreground">
-            Hey, content creator?
+            Not Just an AI Tool. <span className="text-accent">Your Content Wala Bro.</span>
           </h1>
-          <h2 className="font-headline text-3xl md:text-5xl font-bold mb-6 text-primary-foreground">
-            Or just thinking <span className="text-accent">about jumping in?</span>
-          </h2>
+          <p className="text-lg md:text-xl mb-4 max-w-2xl mx-auto text-muted-foreground">
+            Whether it’s your fail or your win — we’re always content-ready.
+          </p>
           <p className="text-lg md:text-xl mb-6 max-w-2xl mx-auto text-muted-foreground">
-            Bro, that’s literally why we exist.
+            ⚡ Focus on your story, we’ll take care of the rest.
           </p>
-          <p className="text-lg md:text-xl mb-8 max-w-2xl mx-auto text-muted-foreground">
-            No burnout. No “what do I even post?” existential crisis.
-            Just reels, LinkedIn posts, stories — all sorted.
-            <br />
-            <em className="text-accent font-semibold">Idea daalo, viral bano. Simple!</em>
+          <p className="text-xl md:text-2xl font-semibold italic text-accent mb-8 max-w-2xl mx-auto">
+            “Ab teri consistency ka jugaad ready hai bro.”
           </p>
-          <Button asChild size="lg" className="bg-accent hover:bg-accent/90 text-accent-foreground px-10 py-6 text-lg shadow-lg transform hover:scale-105 transition-transform duration-300">
-            <Link href="/reel">Try it now – Free Beta Access</Link>
+          <Button asChild size="lg" className="bg-primary hover:bg-primary/90 text-primary-foreground px-10 py-6 text-lg shadow-lg transform hover:scale-105 transition-transform duration-300">
+            <Link href="/reel">Try Our Tools - Free Beta</Link>
           </Button>
+        </div>
         </div>
       </section>
 
