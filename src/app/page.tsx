@@ -219,29 +219,6 @@ export default function NewHomePageV2() {
         </div>
       </section>
 
-      {/* Last Section: Meet the Bro Behind the Flow */}
-      <section className="py-16 md:py-20 bg-background/50">
-        <div className="container mx-auto px-4 text-center max-w-3xl">
-          <Smile className="mx-auto h-12 w-12 text-accent mb-6" />
-          <h2 className="font-headline text-3xl md:text-4xl font-bold mb-6 text-primary-foreground">
-            Meet the Bro <span className="text-accent">Behind the Flow</span>
-          </h2>
-          <p className="text-xl text-muted-foreground mb-4 leading-relaxed">
-            Hey! I’m <strong className="text-primary-foreground">Vansham</strong>, founder of ContentFlow.
-          </p>
-          <p className="text-lg text-muted-foreground mb-6 leading-relaxed">
-            I love creating content, being active in communities, attending events, and most importantly — <strong className="text-primary-foreground">growing with people.</strong>
-          </p>
-          <p className="text-lg text-muted-foreground mb-8 leading-relaxed">
-            This isn’t just a product. It’s my way of saying:
-          </p>
-          <p className="text-xl font-semibold italic text-accent">
-            “Tere jaise creators deserve better tools,<br/>
-            Tera bhai bana raha hai wahi.”
-          </p>
-        </div>
-      </section>
-
       {/* Feedback & CTA Section (Kept from original structure) */}
       <section className="py-20 md:py-28 bg-gradient-to-t from-background to-slate-900/60 relative">
         <div className="container mx-auto px-4 text-center max-w-3xl">
