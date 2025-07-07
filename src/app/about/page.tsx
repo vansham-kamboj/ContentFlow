@@ -7,17 +7,17 @@ import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { 
   Users, 
-  Heart, // Can be used for "Growth Buddy" or Community
-  Brain, // For "Why We Exist" / Idea
-  Settings, // For "How We Help" / System
-  MessageSquare, // For Community / Quotes
+  Heart, 
+  Brain, 
+  Settings, 
+  MessageSquare, 
   Instagram, 
-  Award, // For CTA
-  Smile, // For Founder Bro
+  Award, 
+  Smile, 
   Briefcase,
   TrendingUp,
   Film,
-  Sparkles // Generic positive icon
+  Sparkles
 } from 'lucide-react';
 
 export default function AboutPageV2() {
@@ -108,25 +108,6 @@ export default function AboutPageV2() {
         </section>
 
         <hr className="border-border/50" />
-
-        {/* Last: The Founder Bro */}
-        <section className="text-center">
-          <Smile className="w-16 h-16 text-accent mx-auto mb-6" />
-          <h2 className="font-headline text-3xl md:text-4xl font-bold text-primary-foreground mb-4">
-            The Founder Bro
-          </h2>
-          <p className="text-lg text-muted-foreground mb-4 leading-relaxed">
-            I’m <strong className="text-primary-foreground">Vansham</strong>, and I’m not just building a tool — I’m building a movement.
-          </p>
-          <p className="text-lg text-muted-foreground mb-6 leading-relaxed">
-            From growing startups to building personal brands, from creating content to building communities —
-            <br />
-            <strong className="text-primary-foreground">I’ve been in the zone. And now I want to bring others with me.</strong>
-          </p>
-          <p className="text-xl font-semibold text-accent italic">
-            “Bro, you stay real. We make sure your content stays regular.”
-          </p>
-        </section>
 
         {/* Be Part of the Journey / CTA (Kept from original) */}
         <Card className="shadow-xl bg-card/80 text-card-foreground border-accent mt-16 backdrop-blur-sm">
